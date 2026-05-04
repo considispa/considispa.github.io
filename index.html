@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Valutazione Progetto - Horo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+:root{
+  --oro:#C9A84C;
+  --oro-dark:#a8873a;
+  --nero:#000;
+  --bg:#f4f4f4;
+  --card:#fff;
+  --text:#222;
+  --border:#d7d7d7;
+  --radius:12px;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  font-size:16px;
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.4;
+}
+
+header{
+  background:var(--nero);
+  padding:calc(14px + env(safe-area-inset-top)) 16px 14px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+header h2{
+  color:var(--oro);
+  margin:0;
+  font-size:clamp(16px,4vw,22px);
+  letter-spacing:1.5px;
+}
+
+.container{
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+  padding:18px 14px calc(28px + env(safe-area-inset-bottom));
+}
+
+h1{
+  color:var(--nero);
+  border-bottom:3px solid var(--oro);
+  padding-bottom:10px;
+  margin:6px 0 18px;
+  font-size:clamp(20px,5vw,30px);
+  line-height:1.2;
+}
+
+.section{
+  background:var(--card);
+  padding:18px;
+  margin-bottom:18px;
+  border-radius:var(--radius);
+  box-shadow:0 3px 12px rgba(0,0,0,0.08);
+  overflow:hidden;
+}
+
+.section-title{
+  background:var(--oro);
+  color:white;
+  padding:12px 16px;
+  margin:-18px -18px 18px;
+  font-weight:bold;
+  font-size:clamp(15px,4vw,17px);
+}
+
+.field{
+  margin-top:16px;
+}
+
+label{
+  display:block;
+  margin-bottom:7px;
+  font-weight:bold;
+  font-size:15px;
+  color:#333;
+}
+
+input,
+select{
+  width:100%;
+  min-height:50px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:16px;
+  background:white;
+  color:#333;
+  -webkit-appearance:menulist;
+  appearance:auto;
+}
+
+input:focus,
+select:focus{
+  outline:3px solid rgba(201,168,76,0.28);
+  border-color:var(--oro);
+}
+
+button{
+  background:var(--oro);
+  color:white;
+  border:none;
+  padding:15px 20px;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:8px;
+  margin-top:18px;
+  width:100%;
+  min-height:50px;
+  font-weight:bold;
+  letter-spacing:.6px;
+  touch-action:manipulation;
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+button:hover{ background:var(--oro-dark); }
+button:active{ background:#8a6e2f; transform:scale(.99); }
+
+.result-box{
+  padding:14px;
+  margin-top:16px;
+  border-radius:8px;
+  font-weight:bold;
+  font-size:15px;
+  overflow-wrap:anywhere;
+}
+
+.green  { background:#d4edda; color:#155724; }
+.yellow { background:#fff3cd; color:#856404; }
+.red    { background:#f8d7da; color:#721c24; }
+.neutral{ background:#f1f1f1; color:#333;    }
+
+/* Campo valore progetto dinamico */
+#campoValoreProgetto{
+  display:none;
+  margin-top:16px;
+}
+
+#campoValoreProgetto label{
+  margin-bottom:7px;
+}
+
+@media(min-width:700px){
+  .container{ padding:24px; }
+  .section{ padding:24px; margin-bottom:22px; }
+  .section-title{ margin:-24px -24px 22px; }
+  .grid-2{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:0 18px;
+  }
+  button#scaricaBtn{
+    width:auto;
+    min-width:220px;
+  }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <h2>HORO | TAILOR MADE INTERIORS</h2>
+</header>
+
+<main class="container">
+<h1>Valutazione Complessità e Interesse Progetto</h1>
+
+<!-- DATI INIZIALI -->
+<section class="section">
+  <div class="section-title">Dati Iniziali</div>
+  <div class="grid-2">
+
+    <div class="field">
+      <label for="titoloProgetto">Titolo Progetto</label>
+      <input type="text" id="titoloProgetto" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label for="referente">Nome referente progetto</label>
+      <input type="text" id="referente" autocomplete="name">
+    </div>
+
+    <div class="field">
+      <label for="dataRicezione">Data ricezione richiesta cliente</label>
+      <input type="date" id="dataRicezione">
+    </div>
+
+    <div class="field">
+      <label for="dataOfferta">Data richiesta per invio offerta</label>
+      <input type="date" id="dataOfferta">
+    </div>
+
+    <div class="field">
+      <label for="refCommerciale">Ref. comm.le</label>
+      <select id="refCommerciale">
+        <option value="">-- Seleziona --</option>
+        <option>Maurizio Picciolini</option>
+        <option>Alessandro Balli</option>
+        <option>Domenico Salvati</option>
+        <option>Sandro Picciolini</option>
+        <option>Alberto Picciolini</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="finanziamento">Finanziamento/Bando</label>
+      <select id="finanziamento">
+        <option value="">-- Seleziona --</option>
+        <option>Sì</option>
+        <option>No</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="budget">Budget</label>
+      <select id="budget">
+        <option value="">-- Seleziona --</option>
+        <option>Sì</option>
+        <option>No</option>
+      </select>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMPLESSITÀ -->
+<section class="section">
+  <div class="section-title">Complessità</div>
+
+  <div class="field">
+    <label for="complessita_0">Completezza/qualità delle specifiche del Cliente</label>
+    <select id="complessita_0" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Esaustive o proposta nostra (tappezzeria)</option>
+      <option value="1">Sufficienti o proposta nostra (falegnameria)</option>
+      <option value="2">Poco chiara e/o eccessive</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_1">Camere o Zone Comuni?</label>
+    <select id="complessita_1" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Solo Camere</option>
+      <option value="1">Zone comuni</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_2">Modello nuovo</label>
+    <select id="complessita_2" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Nessun modello nuovo (né per tapp né per fale)</option>
+      <option value="1">Modello nuovo almeno per una tra tapp e fale</option>
+      <option value="2">Modello nuovo o ricoperture (sia per tapp che per fale)</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_3">Componenti che richiedono coinvolgimento di un terzista</label>
+    <select id="complessita_3" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">No</option>
+      <option value="1">Sì, solo complementi</option>
+      <option value="2">Sì, parti sostanziali o prodotti completi</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_4">Complessità materiali</label>
+    <select id="complessita_4" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Materiali semplici</option>
+      <option value="1">Materiali medi</option>
+      <option value="2">Materiali complessi</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_5">Numerosità di articoli diversi</label>
+    <select id="complessita_5" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">&lt;= 15</option>
+      <option value="1">&gt; 15</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_6">Complessità strutturale</label>
+    <select id="complessita_6" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Struttura semplice (lineare)</option>
+      <option value="1">Struttura con elementi curvi/modulari</option>
+      <option value="2">Struttura complessa (curve, elementi speciali, meccanismi integrati)</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="complessita_7">Complessità logistica</label>
+    <select id="complessita_7" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Logistica semplice (consegne anche ingombranti direttamente in struttura)</option>
+      <option value="1">Logistica media</option>
+      <option value="2">Logistica complessa (ZTL, centro storico, isole, barche, ecc.)</option>
+    </select>
+  </div>
+
+  <div id="risultatoComplessita"></div>
+</section>
+
+<!-- INTERESSE DEL PROGETTO -->
+<section class="section">
+  <div class="section-title">Interesse del Progetto</div>
+
+  <div class="field">
+    <label for="tipo_progetto">Tipo progetto</label>
+    <select id="tipo_progetto" onchange="onTipoProgettoChange()">
+      <option value="">-- Seleziona --</option>
+      <option value="tappezzeria">Tappezzeria</option>
+      <option value="falegnameria">Falegnameria</option>
+      <option value="entrambe">Entrambe</option>
+    </select>
+  </div>
+
+  <!-- Valore progetto: appare solo dopo aver scelto il tipo -->
+  <div id="campoValoreProgetto">
+    <label id="labelValoreProgetto">Valore del progetto</label>
+    <select id="valore_progetto" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="tipologia_cliente">Tipologia cliente</label>
+    <select id="tipologia_cliente" onchange="calcola()">
+      <option value="">-- Seleziona --</option>
+      <option value="0">Cliente con forte potenziale (es. nuovo in conquista o da riconquistare)/gare</option>
+      <option value="1">Cliente noto importante</option>
+      <option value="2">Cliente noto marginale/piccolo</option>
+    </select>
+  </div>
+
+  <div id="risultatoInteresse"></div>
+</section>
+
+<!-- ESITO FINALE -->
+<section class="section">
+  <div class="section-title">Esito Finale</div>
+  <div id="esitoFinale">
+    <div class="result-box neutral">Compila tutti i campi per visualizzare l'esito.</div>
+  </div>
+  <button type="button" id="scaricaBtn">Scarica XLSX</button>
+</section>
+
+</main>
+
+<script>
+/* ── DATI STATICI ────────────────────────────────────────── */
+
+var complessitaData = [
+  {domanda:"Completezza/qualità delle specifiche del Cliente", punteggi:[1,2,3], peso:0.24},
+  {domanda:"Camere o Zone Comuni?",                            punteggi:[1,3],   peso:0.07},
+  {domanda:"Modello nuovo",                                    punteggi:[1,2,3], peso:0.12},
+  {domanda:"Componenti che richiedono coinvolgimento di un terzista", punteggi:[1,2,3], peso:0.07},
+  {domanda:"Complessità materiali",                            punteggi:[1,2,3], peso:0.16},
+  {domanda:"Numerosità di articoli diversi",                   punteggi:[1,3],   peso:0.16},
+  {domanda:"Complessità strutturale",                          punteggi:[1,2,3], peso:0.11},
+  {domanda:"Complessità logistica",                            punteggi:[1,2,3], peso:0.07}
+];
+
+var clienteOpzioni = [
+  {val:3},
+  {val:2},
+  {val:1}
+];
+
+// Opzioni valore progetto per ogni tipo
+var opzioniValore = {
+  tappezzeria:[
+    {value:"1", text:"< 20.000€"},
+    {value:"2", text:"< 200.000€"},
+    {value:"3", text:"> 200.000€"}
+  ],
+  falegnameria:[
+    {value:"1", text:"< 70.000€"},
+    {value:"2", text:"< 200.000€"},
+    {value:"3", text:"> 200.000€"}
+  ],
+  entrambe:[
+    {value:"1", text:"< 70.000€"},
+    {value:"2", text:"< 200.000€"},
+    {value:"3", text:"> 200.000€"}
+  ]
+};
+
+// Etichette leggibili per il tipo progetto nel campo label
+var labelTipo = {
+  tappezzeria : "Valore del progetto — Tappezzeria",
+  falegnameria: "Valore del progetto — Falegnameria",
+  entrambe    : "Valore del progetto — Entrambe"
+};
+
+/* ── STATO ───────────────────────────────────────────────── */
+var classeComplessita    = null;
+var punteggioComplessita = null;
+var classeInteresse      = null;
+var esitoFinale          = null;
+
+/* ── GESTIONE TIPO PROGETTO ──────────────────────────────── */
+function onTipoProgettoChange(){
+  var tipo   = document.getElementById("tipo_progetto").value;
+  var campo  = document.getElementById("campoValoreProgetto");
+  var label  = document.getElementById("labelValoreProgetto");
+  var select = document.getElementById("valore_progetto");
+
+  // Svuota e nasconde di default
+  select.innerHTML = "<option value=''>-- Seleziona --</option>";
+  campo.style.display = "none";
+
+  if(tipo && opzioniValore[tipo]){
+    // Aggiorna etichetta
+    label.textContent = labelTipo[tipo];
+    // Popola le opzioni corrette
+    opzioniValore[tipo].forEach(function(opt){
+      var o = document.createElement("option");
+      o.value = opt.value;
+      o.textContent = opt.text;
+      select.appendChild(o);
+    });
+    // Mostra il campo con la classe .field per coerenza visiva
+    campo.style.display = "block";
+  }
+
+  // Azzera risultati dipendenti
+  classeInteresse = null;
+  esitoFinale     = null;
+  document.getElementById("risultatoInteresse").innerHTML = "";
+  document.getElementById("esitoFinale").innerHTML =
+    "<div class='result-box neutral'>Compila tutti i campi per visualizzare l'esito.</div>";
+
+  calcola();
+}
+
+/* ── HELPERS ─────────────────────────────────────────────── */
+function getValoreFascia(){
+  return document.getElementById("valore_progetto").value;
+}
+
+function getValoreFasciaText(){
+  var sel = document.getElementById("valore_progetto");
+  if(!sel.value) return "";
+  return sel.options[sel.selectedIndex].text;
+}
+
+/* ── CALCOLO COMPLESSITÀ ─────────────────────────────────── */
+function calcola(){
+  var totale   = 0;
+  var completo = true;
+
+  complessitaData.forEach(function(item, index){
+    var sel = document.getElementById("complessita_" + index);
+    var val = sel ? sel.value : "";
+    if(val === ""){ completo = false; return; }
+    totale += item.punteggi[Number(val)] * item.peso;
+  });
+
+  if(completo){
+    totale = Number(totale.toFixed(2));
+    var classe = "", colore = "green";
+    if     (totale <= 1.7){ classe = "BASSO"; colore = "green";  }
+    else if(totale <= 2.3){ classe = "MEDIO"; colore = "yellow"; }
+    else                  { classe = "ALTO";  colore = "red";    }
+
+    classeComplessita    = classe;
+    punteggioComplessita = totale;
+    document.getElementById("risultatoComplessita").innerHTML =
+      '<div class="result-box ' + colore + '">' +
+        'Punteggio Complessità: ' + totale + '<br>Classe: ' + classe +
+      '</div>';
+  } else {
+    classeComplessita    = null;
+    punteggioComplessita = null;
+    document.getElementById("risultatoComplessita").innerHTML = "";
+  }
+
+  calcolaInteresse();
+}
+
+/* ── CALCOLO INTERESSE ───────────────────────────────────── */
+function calcolaInteresse(){
+  var tipo       = document.getElementById("tipo_progetto").value;
+  var fasciaVal  = getValoreFascia();
+  var clienteIdx = document.getElementById("tipologia_cliente").value;
+
+  if(!tipo || !fasciaVal || clienteIdx === ""){
+    classeInteresse = null;
+    document.getElementById("risultatoInteresse").innerHTML = "";
+    calcolaFinale();
+    return;
+  }
+
+  var valoreClasse = Number(fasciaVal);
+  var clienteVal   = clienteOpzioni[Number(clienteIdx)].val;
+
+  var matrice = {
+    3:{ 1:"B", 2:"A", 3:"A" },
+    2:{ 1:"C", 2:"B", 3:"A" },
+    1:{ 1:"C", 2:"C", 3:"B" }
+  };
+
+  var risultato = matrice[clienteVal][valoreClasse];
+  var legende   = {
+    A:"A - Massimo interesse",
+    B:"B - Medio interesse",
+    C:"C - Minimo interesse"
+  };
+
+  classeInteresse = risultato;
+  document.getElementById("risultatoInteresse").innerHTML =
+    '<div class="result-box neutral">Classe Interesse: ' + legende[risultato] + '</div>';
+
+  calcolaFinale();
+}
+
+/* ── CALCOLO ESITO FINALE ────────────────────────────────── */
+function calcolaFinale(){
+  var box = document.getElementById("esitoFinale");
+
+  if(!classeComplessita || !classeInteresse){
+    esitoFinale = null;
+    box.innerHTML =
+      "<div class='result-box neutral'>Compila tutti i campi per visualizzare l'esito.</div>";
+    return;
+  }
+
+  var matriceFinale = {
+    A:{ ALTO:"Approfondita", MEDIO:"Approfondita", BASSO:"Strutturata" },
+    B:{ ALTO:"Strutturata",  MEDIO:"Strutturata",  BASSO:"Snella"      },
+    C:{ ALTO:"Strutturata",  MEDIO:"Snella",        BASSO:"Snella"      }
+  };
+
+  esitoFinale = matriceFinale[classeInteresse][classeComplessita];
+  box.innerHTML = '<div class="result-box neutral">' + esitoFinale + '</div>';
+}
+
+/* ── EXPORT EXCEL ────────────────────────────────────────── */
+function scaricaExcel(){
+  if(typeof XLSX === "undefined"){
+    alert("Libreria XLSX non caricata. Verifica la connessione internet e riprova.");
+    return;
+  }
+
+  var titoloProgetto = document.getElementById("titoloProgetto").value.trim();
+  var dataRicezione  = document.getElementById("dataRicezione").value;
+  var dataOfferta    = document.getElementById("dataOfferta").value;
+  var referente      = document.getElementById("referente").value.trim();
+  var refCommerciale = document.getElementById("refCommerciale").value;
+  var finanziamento  = document.getElementById("finanziamento").value;
+  var budget         = document.getElementById("budget").value;
+
+  if(!titoloProgetto||!dataRicezione||!dataOfferta||!referente||!refCommerciale||!finanziamento||!budget){
+    alert("Compilare tutti i campi iniziali.");
+    return;
+  }
+  if(!esitoFinale){
+    alert("Compilare tutte le domande di Complessità e Interesse del Progetto.");
+    return;
+  }
+
+  var tipoProgetto  = document.getElementById("tipo_progetto").value;
+  var tipologiaRich = tipoProgetto === "tappezzeria"  ? "solo tappezzeria"
+                    : tipoProgetto === "falegnameria" ? "solo falegnameria"
+                    : "entrambe";
+
+  var idValutazione = titoloProgetto.replace(/\s+/g,"_") + "_" + Date.now();
+  var dataDownload  = new Date().toLocaleString("it-IT");
+  var wb = XLSX.utils.book_new();
+
+  var risultati = [{
+    "ID Valutazione"                   : idValutazione,
+    "Title"                            : titoloProgetto,
+    "Data ricezione richiesta cliente" : dataRicezione,
+    "Data richiesta per invio offerta" : dataOfferta,
+    "Nome referente progetto"          : referente,
+    "Ref. comm.le"                     : refCommerciale,
+    "Finanziamento/Bando"              : finanziamento,
+    "Budget"                           : budget,
+    "Tipologia Richiesta"              : tipologiaRich,
+    "Data Download File"               : dataDownload,
+    "Punteggio Complessità"            : punteggioComplessita,
+    "Classe Complessità"               : classeComplessita,
+    "Classe Interesse"                 : classeInteresse,
+    "Tipologia Offerta"                : esitoFinale
+  }];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(risultati), "Risultati");
+
+  var risposte = [];
+  complessitaData.forEach(function(item, index){
+    var sel = document.getElementById("complessita_" + index);
+    risposte.push({
+      "ID Valutazione": idValutazione,
+      "Sezione"       : "Complessità",
+      "Domanda"       : item.domanda,
+      "Risposta"      : sel.options[sel.selectedIndex].text
+    });
+  });
+
+  var sTipo    = document.getElementById("tipo_progetto");
+  var sCliente = document.getElementById("tipologia_cliente");
+  risposte.push({
+    "ID Valutazione": idValutazione,
+    "Sezione"       : "Interesse",
+    "Domanda"       : "Tipo progetto",
+    "Risposta"      : sTipo.options[sTipo.selectedIndex].text
+  });
+  risposte.push({
+    "ID Valutazione": idValutazione,
+    "Sezione"       : "Interesse",
+    "Domanda"       : "Valore del progetto",
+    "Risposta"      : getValoreFasciaText()
+  });
+  risposte.push({
+    "ID Valutazione": idValutazione,
+    "Sezione"       : "Interesse",
+    "Domanda"       : "Tipologia cliente",
+    "Risposta"      : sCliente.options[sCliente.selectedIndex].text
+  });
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(risposte), "Risposte");
+  XLSX.writeFile(wb, "Database_Horo_" + new Date().getFullYear() + ".xlsx");
+}
+
+/* ── INIT ────────────────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById("scaricaBtn").addEventListener("click", scaricaExcel);
+});
+</script>
+</body>
+</html>
