@@ -53,7 +53,6 @@ border-radius:8px 8px 0 0;
 font-weight:bold;
 }
 
-/* Grid a 2 colonne per i dati iniziali */
 .grid-2{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -217,8 +216,8 @@ const complessitaData = [
 {
   domanda:"Completezza/qualità delle specifiche del Cliente",
   opzioni:[
-    "Esaustive o proposta nostra (tappezzeria)",
-    "Sufficienti o proposta nostra (falegnameria)",
+    "Esaustive o proposta nostra",        // ✅ rimossa (tappezzeria)
+    "Sufficienti o proposta nostra",       // ✅ rimossa (falegnameria)
     "Poco chiara e/o eccessive"
   ],
   punteggi:[1,2,3],
@@ -227,8 +226,8 @@ const complessitaData = [
 {
   domanda:"Camere o Zone Comuni?",
   opzioni:[
-    "Solo Camere",
-    "Zone comuni"
+    "Solo camere",                         // ✅ modificata
+    "Presenza di zone comuni"              // ✅ modificata
   ],
   punteggi:[1,3],
   peso:0.07
@@ -489,14 +488,11 @@ function scaricaEApriMail(){
     return;
   }
 
-  // ── Anno dalla data ricezione richiesta cliente ───────────────────────────
   const anno = dataRicezione.split("-")[0];
 
-  // ── Formatta la data offerta in italiano (dd/mm/yyyy) ────────────────────
   const partiData = dataOfferta.split("-");
   const dataOffertaFormattata = partiData[2] + "/" + partiData[1] + "/" + partiData[0];
 
-  // ── Nome file: Horo_NomeProgetto_Anno ─────────────────────────────────────
   const nomePulito = titoloProgetto.replace(/\s+/g, "_");
   const nomeFile = "Horo_" + nomePulito + "_" + anno + ".xlsx";
 
