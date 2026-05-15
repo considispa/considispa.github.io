@@ -329,9 +329,9 @@ return;
 }
 
 const matriceFinale={
-"A":{"ALTO":"Prev. Approfondita","MEDIO":"Prev. Approfondita","BASSO":"Prev. Strutturata"},
-"B":{"ALTO":"Prev. Strutturata","MEDIO":"Prev. Strutturata","BASSO":"Prev. Snella"},
-"C":{"ALTO":"Prev. Strutturata","MEDIO":"Prev. Snella","BASSO":"Prev. Snella"}
+"A":{"ALTO":"Approfondita","MEDIO":"Approfondita","BASSO":"Strutturata"},
+"B":{"ALTO":"Strutturata","MEDIO":"Strutturata","BASSO":"Snella"},
+"C":{"ALTO":"Strutturata","MEDIO":"Snella","BASSO":"Snella"}
 };
 
 let esito=matriceFinale[window.classeInteresse][window.classeComplessita];
@@ -380,7 +380,7 @@ let risultati=[{
 "Punteggio complessità":window.punteggioComplessita,
 "Classe complessità":window.classeComplessita,
 "Classe interesse":window.classeInteresse,
-"Tipologia offerta":window.esitoFinale
+"Classe preventivazione":window.esitoFinale
 }];
 
 let wsRisultati=XLSX.utils.json_to_sheet(risultati);
