@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Valutazione Progetto - Moretto</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+body{
+font-family: Arial, Helvetica, sans-serif;
+margin:0;
+background:#f4f4f4;
+}
+
+header{
+background:black;
+padding:15px 0;
+text-align:center;
+}
+
+header .logo-container{
+background:white;
+display:inline-block;
+padding:10px 30px;
+border-radius:4px;
+}
+
+header img{
+height:60px;
+display:block;
+}
+
+.container{
+width:1100px;
+margin:30px auto;
+}
+
+h1{
+color:black;
+border-bottom:3px solid #c00000;
+padding-bottom:10px;
+}
+
+.section{
+background:white;
+padding:25px;
+margin-bottom:25px;
+border-radius:8px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.section-title{
+background:#c00000;
+color:white;
+padding:10px;
+margin:-25px -25px 20px -25px;
+border-radius:8px 8px 0 0;
+font-weight:bold;
+}
+
+label{
+display:block;
+margin-top:15px;
+font-weight:bold;
+}
+
+select, input{
+width:100%;
+padding:8px;
+margin-top:5px;
+border:1px solid #ccc;
+border-radius:4px;
+}
+
+button{
+background:#c00000;
+color:white;
+border:none;
+padding:12px 25px;
+font-size:16px;
+cursor:pointer;
+border-radius:5px;
+margin-top:20px;
+}
+
+button:hover{
+background:#900000;
+}
+
+.result-box{
+padding:15px;
+margin-top:15px;
+border-radius:6px;
+font-weight:bold;
+}
+
+.green{background:#d4edda;}
+.yellow{background:#fff3cd;}
+.red{background:#f8d7da;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="logo-moretto.png">
+  </div>
+</header>
+
+<div class="container">
+
+<h1>Valutazione Complessità e Interesse Progetto</h1>
+
+<div class="section">
+<div class="section-title">Dati Iniziali</div>
+
+<label>Nome Progetto</label>
+<input type="text" id="nomeProgetto">
+
+<label>Cliente</label>
+<input type="text" id="cliente">
+
+<label>Data ricezione richiesta</label>
+<input type="date" id="data">
+
+<label>Versione Revisione (es. Rev.0, Rev.1)</label>
+<input type="text" id="versione">
+</div>
+
+<div class="section">
+<div class="section-title">Complessità</div>
+<div id="complessita"></div>
+<div id="risultatoComplessita"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Interesse</div>
+<div id="interesse"></div>
+<div id="risultatoInteresse"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Esito Finale</div>
+<div id="esitoFinale"></div>
+<button onclick="scaricaExcel()">Scarica XLSX</button>
+</div>
+
+</div>
+
+<script>
+
+// ==========================
+// DATI COMPLESSITA
+// ==========================
+
+const complessitaData = [
+{categoria:"Tipologia richiesta", domanda:"La richiesta riguarda una modifica di una commessa già in essere?",
+opzioni:["Modifica a commessa già in essere","Richiesta nuovo prodotto"], punteggi:[null,null], peso:null},
+
+{categoria:"Tipologia richiesta", domanda:"La richiesta è di tipo benchmark?",
+opzioni:["Market test (benchmark informativo/aziendale)","Subentro a competitor (benchmark potenziale acquisizione)","No benchmark"], punteggi:[null,null,null], peso:null},
+
+{categoria:"Complessità del Prodotto", domanda:"Novità del Prodotto: Qual è il grado di novità di questo codice?",
+opzioni:[
+"Basso: Carry-over / Codice Esistente (nessuna modifica tecnica) oppure nuovo prodotto con geometria semplice",
+"Medio: nuovo prodotto simile a prodotti già realizzati (stessa famiglia)",
+"Alto: nuovo prodotto mai realizzato prima, tecnologia nuova per l'azienda"], punteggi:[1,2,3], peso:0.13},
+
+{categoria:"Complessità del Prodotto", domanda:"Tolleranze Richieste: Qual è il livello di precisione richiesto?",
+opzioni:[
+"Senza tolleranze/Tolleranze dimensionali lasche, senza GD&T specifiche",
+"Tolleranze Strette: Tolleranze dimensionali strette su alcune quote critiche. Impossibilità di interpretare tolleranze",
+"GD&T Complesso: Requisiti stringenti di planarità, parallelismo, profili, etc."], punteggi:[1,2,3], peso:0.13},
+
+{categoria:"Complessità del Prodotto", domanda:"Requisiti Estetici: Il prodotto ha requisiti estetici critici?",
+opzioni:[
+"Componente strutturale o interno con imperfezioni ammesse",
+"Requisiti estetici standard, piccole imperfezioni ammesse, requisiti di rugosità",
+"Superficie perfetta"], punteggi:[1,2,3], peso:0.07},
+
+{categoria:"Complessità del Prodotto", domanda:"Requisiti Funzionali: Il prodotto ha requisiti funzionali critici?",
+opzioni:[
+"Non è un componente di sicurezza e non ha requisiti funzionali stringenti",
+"Non è noto se il componente abbia requisiti di sicurezza",
+"È un componente di sicurezza o con requisiti funzionali stringenti (es. test cicli)"], punteggi:[1,2,3], peso:0.07},
+
+{categoria:"Complessità del Prodotto", domanda:"Numerosità di codici da quotare (part number)",
+opzioni:["da 1 a 3","da 4 a 10","> 10"], punteggi:[1,2,3], peso:0.05},
+
+{categoria:"Complessità del Materiale", domanda:"Tipo di Materiale: Il materiale richiesto è standard per l'azienda?",
+opzioni:[
+"Materiale Standard: Acciaio al carbonio o alluminio di uso comune (es. DC04, AL5-IIC)",
+"Materiale Speciale: Acciaio ad alta resistenza (>300), acciaio inox, alluminio speciale",
+"Materiale Nuovo/Esotico: Materiale mai lavorato prima, con fornitore non consolidato, altro (es. nichel, rame, pre verniciato)"], punteggi:[1,2,3], peso:0.11},
+
+{categoria:"Complessità del Processo", domanda:"Tipo di Attrezzatura (Stampo): Che tipo di stampo è necessario?",
+opzioni:[
+"Trasferimento Stampo Cliente: Stampo esistente fornito dal cliente",
+"Costruzione Nuovo Stampo prototipale",
+"Costruzione Nuovo Stampo di serie"], punteggi:[1,2,3], peso:0.07},
+
+{categoria:"Complessità del Processo", domanda:"Operazioni Aggiuntive: Sono richieste lavorazioni oltre lo stampaggio?",
+opzioni:[
+"Nessuna: Solo stampaggio",
+"Con altre lavorazioni ma volumi produttivi bassi: Es. trattamenti termici, trattamenti superficiali (cataforesi, zincatura), saldatura, assemblaggio componenti (dadi, clip), lavorazioni meccaniche, lavaggio con criteri di pulizia",
+"Con altre lavorazioni e volumi produttivi alti"], punteggi:[1,2,3], peso:0.21},
+
+{categoria:"Complessità Cliente/Requisiti", domanda:"Requisiti di Qualità e Documentazione: Qual è il livello di documentazione richiesto?",
+opzioni:[
+"Standard Base: Certificato di conformità",
+"Standard Automotive (PPAP Livello 3): Requisiti standard del settore (come l'esempio Nemak)",
+"Requisiti Specifici del Cliente (CSR): Capitolati stringenti, Run@Rate, validazioni multiple, norme specifiche da acquistare/studiare (es. ISO 16232 sulla pulizia)"], punteggi:[1,2,3], peso:0.11},
+
+{categoria:"Complessità Cliente/Requisiti", domanda:"Novità del Cliente/Settore: È un cliente o un settore conosciuto?",
+opzioni:[
+"Cliente Esistente, Business Noto",
+"Cliente Esistente, Business Nuovo",
+"Cliente Nuovo, Business Noto",
+"Cliente Nuovo, Business Nuovo"], punteggi:[1,2,3,3], peso:0.05}
+];
+
+// ==========================
+// DATI INTERESSE
+// ==========================
+
+const interesseData = [
+{categoria:"Tipologia cliente/mercato", domanda:"Tipologia cliente/mercato",
+opzioni:[
+"Cliente con forte potenziale (p.e. nuovo in conquista o da riconquistare)",
+"Cliente storico con fatturato oltre 1 mln/anno",
+"Stabile oltre i 500.000€/anno",
+"Stabile entro i 500.000€/anno",
+"Cliente marginale (non ha potenziale sul mercato né verso di noi)"],
+punteggi:[5,4,3,2,1]},
+
+{categoria:"Valore del progetto", domanda:"Valore del progetto (saturazione macchine 1250-2000-2500-3200, prodotti nuovi, stampaggio + altre fasi, volumi alti, SOP ravvicinati o trasferimenti)",
+opzioni:["Basso","Medio","Alto"],
+punteggi:[1,2,3]}
+];
+
+// ==========================
+// RENDER
+// ==========================
+
+function renderSection(id,data){
+let container=document.getElementById(id);
+data.forEach((item,index)=>{
+let label=document.createElement("label");
+label.innerText=item.categoria+" - "+item.domanda;
+let select=document.createElement("select");
+select.id=id+"_"+index;
+select.innerHTML="<option value=''>-- Seleziona --</option>";
+item.opzioni.forEach((op,i)=>{
+select.innerHTML+=`<option value="${i}">${op}</option>`;
+});
+select.onchange=calcola;
+container.appendChild(label);
+container.appendChild(select);
+});
+}
+
+renderSection("complessita",complessitaData);
+renderSection("interesse",interesseData);
+
+// ==========================
+// CALCOLI (uguali)
+// ==========================
+
+function calcola(){
+
+let totale=0;
+let completo=true;
+
+complessitaData.forEach((item,index)=>{
+let val=document.getElementById("complessita_"+index).value;
+if(val==="") completo=false;
+if(item.peso && val!==""){
+totale+=item.punteggi[val]*item.peso;
+}
+});
+
+if(completo){
+totale=parseFloat(totale.toFixed(2));
+let classe="";
+let colore="green";
+
+if(totale<=1.7){classe="BASSO"; colore="green";}
+else if(totale<=2.3){classe="MEDIO"; colore="yellow";}
+else{classe="ALTO"; colore="red";}
+
+document.getElementById("risultatoComplessita").innerHTML=
+`<div class='result-box ${colore}'>Punteggio Complessità: ${totale}<br>Classe: ${classe}</div>`;
+
+window.classeComplessita=classe;
+window.punteggioComplessita=totale;
+}
+
+calcolaInteresse();
+}
+
+function calcolaInteresse(){
+
+let v1=document.getElementById("interesse_0").value;
+let v2=document.getElementById("interesse_1").value;
+if(v1===""||v2==="") return;
+
+v1=parseInt(v1);
+v2=parseInt(v2);
+
+const matrice={
+5:{1:"B",2:"A",3:"A"},
+4:{1:"B",2:"A",3:"A"},
+3:{1:"B",2:"B",3:"A"},
+2:{1:"C",2:"B",3:"B"},
+1:{1:"NON QUOTARE",2:"C",3:"B"}
+};
+
+let risultato=matrice[interesseData[0].punteggi[v1]][interesseData[1].punteggi[v2]];
+
+document.getElementById("risultatoInteresse").innerHTML=
+`<div class='result-box'>Classe Interesse: ${risultato}</div>`;
+
+window.classeInteresse=risultato;
+calcolaFinale();
+}
+
+function calcolaFinale(){
+
+if(!window.classeComplessita||!window.classeInteresse) return;
+
+if(window.classeInteresse==="NON QUOTARE"){
+document.getElementById("esitoFinale").innerHTML=
+`<div class='result-box red'>NON QUOTARE</div>`;
+window.esitoFinale="NON QUOTARE";
+return;
+}
+
+const matriceFinale={
+"A":{"ALTO":"Prev. Approfondita","MEDIO":"Prev. Approfondita","BASSO":"Prev. Strutturata"},
+"B":{"ALTO":"Prev. Strutturata","MEDIO":"Prev. Strutturata","BASSO":"Prev. Snella"},
+"C":{"ALTO":"Prev. Strutturata","MEDIO":"Prev. Snella","BASSO":"Prev. Snella"}
+};
+
+let esito=matriceFinale[window.classeInteresse][window.classeComplessita];
+
+document.getElementById("esitoFinale").innerHTML=
+`<div class='result-box'>${esito}</div>`;
+
+window.esitoFinale=esito;
+}
+
+// ==========================
+// EXPORT CON DATA DOWNLOAD
+// ==========================
+
+function scaricaExcel(){
+
+const nomeProgetto=document.getElementById("nomeProgetto").value;
+const cliente=document.getElementById("cliente").value;
+const dataRicezione=document.getElementById("data").value;
+const versione=document.getElementById("versione").value;
+
+if(!nomeProgetto||!cliente||!dataRicezione||!versione){
+alert("Compilare tutti i campi iniziali.");
+return;
+}
+
+if(!window.esitoFinale){
+alert("Compilare tutte le domande.");
+return;
+}
+
+const idValutazione=nomeProgetto.replace(/\s+/g,"_")+"_"+Date.now();
+
+// ✅ Data e ora download
+const now = new Date();
+const dataDownload = now.toLocaleString("it-IT");
+
+let wb=XLSX.utils.book_new();
+let risposte=[];
+
+complessitaData.forEach((item,index)=>{
+let sel=document.getElementById("complessita_"+index);
+risposte.push({
+"ID Valutazione":idValutazione,
+"Versione Revisione":versione,
+"Sezione":"Complessità",
+"Categoria":item.categoria,
+"Domanda":item.domanda,
+"Risposta":sel.options[sel.selectedIndex].text
+});
+});
+
+interesseData.forEach((item,index)=>{
+let sel=document.getElementById("interesse_"+index);
+risposte.push({
+"ID Valutazione":idValutazione,
+"Versione Revisione":versione,
+"Sezione":"Interesse",
+"Categoria":item.categoria,
+"Domanda":item.domanda,
+"Risposta":sel.options[sel.selectedIndex].text
+});
+});
+
+let ws1=XLSX.utils.json_to_sheet(risposte);
+XLSX.utils.book_append_sheet(wb,ws1,"Risposte");
+
+let risultati=[{
+"ID Valutazione":idValutazione,
+"Versione Revisione":versione,
+"Nome Progetto":nomeProgetto,
+"Cliente":cliente,
+"Data ricezione richiesta":dataRicezione,
+"Data Download File":dataDownload,
+"Punteggio Complessità":window.punteggioComplessita,
+"Classe Complessità":window.classeComplessita,
+"Classe Interesse":window.classeInteresse,
+"Esito Finale":window.esitoFinale
+}];
+
+let ws2=XLSX.utils.json_to_sheet(risultati);
+XLSX.utils.book_append_sheet(wb,ws2,"Risultati");
+
+XLSX.writeFile(wb,"Database_"+new Date().getFullYear()+".xlsx");
+}
+
+</script>
+</body>
+</html>
