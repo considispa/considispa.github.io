@@ -3,638 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Valutazione Progetto - Horo</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+<title>Considi - Tool di Valutazione Progetti</title>
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
+body {
   font-family: Arial, Helvetica, sans-serif;
-  margin:0;
-  background:#f4f4f4;
+  background: #f4f4f4;
+  color: #333;
 }
 
-header{
-  background:black;
-  padding:15px 0;
-  text-align:center;
+header {
+  background: #1a1a1a;
+  padding: 25px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-header h2{
-  color:#C9A84C;
-  margin:0;
-  font-size:18px;
-  letter-spacing:2px;
+header .logo {
+  color: white;
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 3px;
 }
 
-.container{
-  width:100%;
-  max-width:1100px;
-  margin:20px auto;
-  padding:0 15px;
+header .logo span {
+  color: #c00000;
 }
 
-h1{
-  color:black;
-  border-bottom:3px solid #C9A84C;
-  padding-bottom:10px;
-  font-size:20px;
-  margin-top:15px;
+header .tagline {
+  color: #aaa;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.section{
-  background:white;
-  padding:20px;
-  margin-bottom:20px;
-  border-radius:8px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+.hero {
+  background: #1a1a1a;
+  padding: 60px 40px;
+  text-align: center;
+  border-bottom: 4px solid #c00000;
 }
 
-.section-title{
-  background:#C9A84C;
-  color:white;
-  padding:10px 15px;
-  margin:-20px -20px 20px -20px;
-  border-radius:8px 8px 0 0;
-  font-weight:bold;
-  font-size:15px;
+.hero h1 {
+  color: white;
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
 }
 
-/* Grid 2 colonne su desktop, 1 colonna su mobile */
-.grid-2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px 20px;
+.hero p {
+  color: #aaa;
+  font-size: clamp(14px, 2vw, 16px);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
 }
 
-@media (max-width: 600px){
-  .grid-2{
-    grid-template-columns:1fr;
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 0 30px;
+}
+
+.info-box {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.info-box-header {
+  background: #c00000;
+  color: white;
+  padding: 18px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.info-box-body {
+  padding: 30px 25px;
+}
+
+.info-box-body p {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.url-example {
+  background: #f4f4f4;
+  border-left: 4px solid #c00000;
+  padding: 15px 20px;
+  border-radius: 0 6px 6px 0;
+  margin: 20px 0;
+}
+
+.url-example code {
+  font-size: clamp(13px, 2.5vw, 16px);
+  color: #1a1a1a;
+  font-weight: bold;
+  word-break: break-all;
+}
+
+.url-parts {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.url-part {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 12px 15px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.url-part .badge {
+  background: #1a1a1a;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.url-part p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.divider {
+  border: none;
+  border-top: 2px solid #eee;
+  margin: 25px 0;
+}
+
+.note {
+  background: #fff8f8;
+  border: 1px solid #f5c0c0;
+  border-radius: 6px;
+  padding: 15px 20px;
+  color: #c00000;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #aaa;
+  font-size: 12px;
+  margin-top: 40px;
+  border-top: 1px solid #ddd;
+}
+
+footer strong {
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+    padding: 20px;
   }
-
-  header h2{
-    font-size:15px;
-    letter-spacing:1px;
+  .hero {
+    padding: 40px 20px;
   }
-
-  h1{
-    font-size:17px;
+  .container {
+    padding: 0 15px;
   }
-
-  .section{
-    padding:15px;
-  }
-
-  .section-title{
-    margin:-15px -15px 15px -15px;
-    font-size:14px;
-  }
-
-  button{
-    width:100%;
-    padding:14px;
-    font-size:15px;
-  }
-}
-
-label{
-  display:block;
-  margin-top:5px;
-  font-weight:bold;
-  font-size:14px;
-}
-
-select, input{
-  width:100%;
-  padding:10px 8px;
-  margin-top:5px;
-  border:1px solid #ccc;
-  border-radius:4px;
-  box-sizing:border-box;
-  font-size:16px; /* 16px evita lo zoom automatico su iOS */
-  -webkit-appearance:none;
-  appearance:none;
-  background-color:white;
-}
-
-/* Freccia custom per select */
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
-}
-
-select:focus, input:focus{
-  outline:none;
-  border-color:#C9A84C;
-  box-shadow:0 0 0 2px rgba(201,168,76,0.3);
-}
-
-button{
-  background:#C9A84C;
-  color:white;
-  border:none;
-  padding:13px 25px;
-  font-size:16px;
-  cursor:pointer;
-  border-radius:5px;
-  margin-top:20px;
-  touch-action:manipulation;
-}
-
-button:hover{
-  background:#a8873a;
-}
-
-button:active{
-  background:#8a6e2f;
-  transform:scale(0.98);
-}
-
-.result-box{
-  padding:15px;
-  margin-top:15px;
-  border-radius:6px;
-  font-weight:bold;
-  font-size:15px;
-}
-
-.green{background:#d4edda;}
-.yellow{background:#fff3cd;}
-.red{background:#f8d7da;}
-
-#valore_fascia_container{
-  display:none;
 }
 </style>
 </head>
-
 <body>
 
 <header>
-  <h2>HORO | TAILOR MADE INTERIORS</h2>
+  <div class="logo">CONSI<span>DI</span></div>
+  <div class="tagline">Tool di Valutazione Progetti</div>
 </header>
+
+<div class="hero">
+  <h1>Benvenuto nel portale di valutazione</h1>
+  <p>Questa piattaforma è riservata ai clienti Considi. Per accedere al tuo tool di valutazione, utilizza il link personalizzato che ti è stato fornito dal tuo referente Considi.</p>
+</div>
 
 <div class="container">
 
-<h1>Valutazione Complessità e Interesse Progetto</h1>
+  <div class="info-box">
+    <div class="info-box-header">📋 Come accedere al tuo tool</div>
+    <div class="info-box-body">
 
-<!-- DATI INIZIALI -->
-<div class="section">
-<div class="section-title">Dati Iniziali</div>
+      <p>Per accedere alla tua pagina di compilazione, digita nel browser il seguente indirizzo, sostituendo <strong>azienda</strong> con il nome della tua azienda:</p>
 
-<div class="grid-2">
+      <div class="url-example">
+        <code>https://considispa.github.io/<strong>azienda</strong>/</code>
+      </div>
 
-  <div>
-    <label>Titolo Progetto</label>
-    <input type="text" id="titoloProgetto" autocomplete="off">
-  </div>
+      <p>Ad esempio, se la tua azienda si chiama <strong>"Rossi S.p.A."</strong>, l'indirizzo sarà:</p>
 
-  <div>
-    <label>Nome referente progetto</label>
-    <input type="text" id="referente" autocomplete="off">
-  </div>
+      <div class="url-example">
+        <code>https://considispa.github.io/rossi/</code>
+      </div>
 
-  <div>
-    <label>Data ricezione richiesta cliente</label>
-    <input type="date" id="dataRicezione">
-  </div>
+      <hr class="divider">
 
-  <div>
-    <label>Data richiesta per invio offerta</label>
-    <input type="date" id="dataOfferta">
-  </div>
+      <p>L'indirizzo è composto da due parti:</p>
 
-  <div>
-    <label>Ref. comm.le</label>
-    <select id="refCommerciale">
-      <option value="">-- Seleziona --</option>
-      <option>Maurizio Picciolini</option>
-      <option>Alessandro Balli</option>
-      <option>Domenico Salvati</option>
-      <option>Sandro Picciolini</option>
-      <option>Alberto Picciolini</option>
-    </select>
-  </div>
+      <div class="url-parts">
+        <div class="url-part">
+          <span class="badge">PREFISSO</span>
+          <p><code>https://considispa.github.io/</code><br>Questa parte è sempre uguale per tutti i clienti.</p>
+        </div>
+        <div class="url-part">
+          <span class="badge">AZIENDA</span>
+          <p>Il nome della tua azienda, in minuscolo e senza spazi.<br>Ti viene comunicato dal tuo referente Considi.</p>
+        </div>
+      </div>
 
-  <div>
-    <label>Finanziamento/Bando</label>
-    <select id="finanziamento">
-      <option value="">-- Seleziona --</option>
-      <option>Sì</option>
-      <option>No</option>
-    </select>
-  </div>
+      <hr class="divider">
 
-  <div>
-    <label>Budget</label>
-    <select id="budget">
-      <option value="">-- Seleziona --</option>
-      <option>Sì</option>
-      <option>No</option>
-    </select>
+      <div class="note">
+        ⚠️ <strong>Non hai ricevuto il tuo link?</strong> Contatta il tuo referente Considi per ricevere il nome corretto da inserire nell'indirizzo.
+      </div>
+
+    </div>
   </div>
 
 </div>
-</div>
 
-<!-- COMPLESSITÀ -->
-<div class="section">
-<div class="section-title">Complessità</div>
-<div id="complessita"></div>
-<div id="risultatoComplessita"></div>
-</div>
+<footer>
+  <strong>CONSIDI S.P.A.</strong> (Società Benefit) — Via Alcide De Gasperi n.63, 36040 Grisignano di Zocco (VI)<br>
+  © 2025 Considi S.p.A. — Tutti i diritti riservati
+</footer>
 
-<!-- INTERESSE -->
-<div class="section">
-<div class="section-title">Interesse del Progetto</div>
-<div id="interesse"></div>
-<div id="risultatoInteresse"></div>
-</div>
-
-<!-- ESITO FINALE -->
-<div class="section">
-<div class="section-title">Esito Finale</div>
-<div id="esitoFinale"></div>
-<button onclick="scaricaEApriMail()">⬇️ Scarica XLSX e Apri Mail</button>
-</div>
-
-</div>
-
-<script>
-
-const complessitaData = [
-{
-  domanda:"Completezza/qualità delle specifiche del Cliente",
-  opzioni:[
-    "Esaustive o proposta nostra",
-    "Sufficienti o proposta nostra",
-    "Poco chiara e/o eccessive"
-  ],
-  punteggi:[1,2,3],
-  peso:0.24
-},
-{
-  domanda:"Camere o Zone Comuni?",
-  opzioni:[
-    "Solo camere",
-    "Presenza di zone comuni"
-  ],
-  punteggi:[1,3],
-  peso:0.07
-},
-{
-  domanda:"Modello nuovo",
-  opzioni:[
-    "Nessun modello nuovo (né per tapp né per fale)",
-    "Modello nuovo almeno per una tra tapp e fale",
-    "Modello nuovo o ricoperture (sia per tapp che per fale)"
-  ],
-  punteggi:[1,2,3],
-  peso:0.12
-},
-{
-  domanda:"Componenti che richiedono coinvolgimento di un terzista",
-  opzioni:[
-    "No",
-    "Sì, solo complementi",
-    "Sì, parti sostanziali o prodotti completi"
-  ],
-  punteggi:[1,2,3],
-  peso:0.07
-},
-{
-  domanda:"Complessità materiali",
-  opzioni:[
-    "Materiali semplici",
-    "Materiali medi",
-    "Materiali complessi"
-  ],
-  punteggi:[1,2,3],
-  peso:0.16
-},
-{
-  domanda:"Numerosità di articoli diversi",
-  opzioni:[
-    "<= 15",
-    "> 15"
-  ],
-  punteggi:[1,3],
-  peso:0.16
-},
-{
-  domanda:"Complessità strutturale",
-  opzioni:[
-    "Struttura semplice (lineare)",
-    "Struttura con elementi curvi/modulari",
-    "Struttura complessa (curve, elementi speciali, meccanismi integrati)"
-  ],
-  punteggi:[1,2,3],
-  peso:0.11
-},
-{
-  domanda:"Complessità logistica",
-  opzioni:[
-    "Logistica semplice (consegne anche ingombranti direttamente in struttura)",
-    "Logistica media",
-    "Logistica complessa (ZTL, centro storico, isole, barche, ecc.)"
-  ],
-  punteggi:[1,2,3],
-  peso:0.07
-}
-];
-
-const soglieLabels = {
-  tappezzeria: ["< 20.000€", "< 200.000€", "> 200.000€"],
-  falegnameria: ["< 70.000€", "< 200.000€", "> 200.000€"],
-  entrambe:    ["< 70.000€", "< 200.000€", "> 200.000€"]
-};
-
-const clienteOpzioni = [
-  {label:"Cliente con forte potenziale (es. nuovo in conquista o da riconquistare)/gare", val:3},
-  {label:"Cliente noto importante", val:2},
-  {label:"Cliente noto marginale/piccolo", val:1}
-];
-
-function renderComplessita(){
-  let container = document.getElementById("complessita");
-  complessitaData.forEach((item, index) => {
-    let label = document.createElement("label");
-    label.innerText = item.domanda;
-    let select = document.createElement("select");
-    select.id = "complessita_" + index;
-    select.innerHTML = "<option value=''>-- Seleziona --</option>";
-    item.opzioni.forEach((op, i) => {
-      select.innerHTML += `<option value="${i}">${op}</option>`;
-    });
-    select.onchange = calcola;
-    container.appendChild(label);
-    container.appendChild(select);
-  });
-}
-
-function renderInteresse(){
-  let container = document.getElementById("interesse");
-
-  let lTipo = document.createElement("label");
-  lTipo.innerText = "Tipo progetto";
-  let sTipo = document.createElement("select");
-  sTipo.id = "tipo_progetto";
-  sTipo.innerHTML = "<option value=''>-- Seleziona --</option>" +
-    "<option value='tappezzeria'>Tappezzeria</option>" +
-    "<option value='falegnameria'>Falegnameria</option>" +
-    "<option value='entrambe'>Entrambe</option>";
-  sTipo.onchange = aggiorneFasceValore;
-  container.appendChild(lTipo);
-  container.appendChild(sTipo);
-
-  let fasciaContainer = document.createElement("div");
-  fasciaContainer.id = "valore_fascia_container";
-  fasciaContainer.style.display = "none";
-
-  let lFascia = document.createElement("label");
-  lFascia.innerText = "Valore del progetto";
-  let sFascia = document.createElement("select");
-  sFascia.id = "valore_fascia";
-  sFascia.innerHTML = "<option value=''>-- Seleziona --</option>";
-  sFascia.onchange = calcola;
-
-  fasciaContainer.appendChild(lFascia);
-  fasciaContainer.appendChild(sFascia);
-  container.appendChild(fasciaContainer);
-
-  let lCliente = document.createElement("label");
-  lCliente.innerText = "Tipologia cliente";
-  let sCliente = document.createElement("select");
-  sCliente.id = "tipologia_cliente";
-  sCliente.innerHTML = "<option value=''>-- Seleziona --</option>";
-  clienteOpzioni.forEach((op, i) => {
-    sCliente.innerHTML += `<option value="${i}">${op.label}</option>`;
-  });
-  sCliente.onchange = calcola;
-  container.appendChild(lCliente);
-  container.appendChild(sCliente);
-}
-
-function aggiorneFasceValore(){
-  let tipo = document.getElementById("tipo_progetto").value;
-  let fasciaContainer = document.getElementById("valore_fascia_container");
-  let sFascia = document.getElementById("valore_fascia");
-
-  if(tipo === ""){
-    fasciaContainer.style.display = "none";
-    sFascia.value = "";
-    return;
-  }
-
-  fasciaContainer.style.display = "block";
-  let labels = soglieLabels[tipo];
-  sFascia.innerHTML = "<option value=''>-- Seleziona --</option>";
-  labels.forEach((label, i) => {
-    sFascia.innerHTML += `<option value="${i+1}">${label}</option>`;
-  });
-
-  calcola();
-}
-
-renderComplessita();
-renderInteresse();
-
-function calcola(){
-  let totale = 0;
-  let completo = true;
-
-  complessitaData.forEach((item, index) => {
-    let val = document.getElementById("complessita_" + index).value;
-    if(val === "") completo = false;
-    if(val !== ""){
-      totale += item.punteggi[val] * item.peso;
-    }
-  });
-
-  if(completo){
-    totale = parseFloat(totale.toFixed(2));
-    let classe = "";
-    let colore = "green";
-
-    if(totale <= 1.7){ classe = "BASSO"; colore = "green"; }
-    else if(totale <= 2.3){ classe = "MEDIO"; colore = "yellow"; }
-    else { classe = "ALTO"; colore = "red"; }
-
-    document.getElementById("risultatoComplessita").innerHTML =
-      `<div class='result-box ${colore}'>Punteggio Complessità: ${totale}<br>Classe: ${classe}</div>`;
-
-    window.classeComplessita = classe;
-    window.punteggioComplessita = totale;
-  } else {
-    window.classeComplessita = null;
-  }
-
-  calcolaInteresse();
-}
-
-function calcolaInteresse(){
-  let tipo = document.getElementById("tipo_progetto").value;
-  let fasciaVal = document.getElementById("valore_fascia").value;
-  let clienteIdx = document.getElementById("tipologia_cliente").value;
-
-  if(tipo === "" || fasciaVal === "" || clienteIdx === "") return;
-
-  let valoreClasse = parseInt(fasciaVal);
-  let clienteVal = clienteOpzioni[parseInt(clienteIdx)].val;
-
-  const matrice = {
-    3: {1:"B", 2:"A", 3:"A"},
-    2: {1:"C", 2:"B", 3:"A"},
-    1: {1:"C", 2:"C", 3:"B"}
-  };
-
-  let risultato = matrice[clienteVal][valoreClasse];
-  const legende = {
-    A:"A - Massimo interesse",
-    B:"B - Medio interesse",
-    C:"C - Minimo interesse"
-  };
-
-  document.getElementById("risultatoInteresse").innerHTML =
-    `<div class='result-box'>Classe Interesse: ${legende[risultato]}</div>`;
-
-  window.classeInteresse = risultato;
-  calcolaFinale();
-}
-
-function calcolaFinale(){
-  if(!window.classeComplessita || !window.classeInteresse) return;
-
-  const matriceFinale = {
-    "A":{"ALTO":"Approfondita","MEDIO":"Approfondita","BASSO":"Strutturata"},
-    "B":{"ALTO":"Strutturata","MEDIO":"Strutturata","BASSO":"Snella"},
-    "C":{"ALTO":"Strutturata","MEDIO":"Snella","BASSO":"Snella"}
-  };
-
-  let esito = matriceFinale[window.classeInteresse][window.classeComplessita];
-
-  document.getElementById("esitoFinale").innerHTML =
-    `<div class='result-box'>${esito}</div>`;
-
-  window.esitoFinale = esito;
-}
-
-function scaricaEApriMail(){
-  const titoloProgetto = document.getElementById("titoloProgetto").value;
-  const dataRicezione  = document.getElementById("dataRicezione").value;
-  const dataOfferta    = document.getElementById("dataOfferta").value;
-  const referente      = document.getElementById("referente").value;
-  const refCommerciale = document.getElementById("refCommerciale").value;
-  const finanziamento  = document.getElementById("finanziamento").value;
-  const budget         = document.getElementById("budget").value;
-
-  if(!titoloProgetto || !dataRicezione || !dataOfferta || !referente || !refCommerciale || !finanziamento || !budget){
-    alert("Compilare tutti i campi iniziali.");
-    return;
-  }
-
-  if(!window.esitoFinale){
-    alert("Compilare tutte le domande.");
-    return;
-  }
-
-  const anno = dataRicezione.split("-")[0];
-
-  const partiData = dataOfferta.split("-");
-  const dataOffertaFormattata = partiData[2] + "/" + partiData[1] + "/" + partiData[0];
-
-  const nomePulito = titoloProgetto.replace(/\s+/g, "_");
-  const nomeFile = "Horo_" + nomePulito + "_" + anno + ".xlsx";
-
-  const idValutazione = nomePulito + "_" + Date.now();
-  const now = new Date();
-  const dataDownload = now.toLocaleString("it-IT");
-
-  let tipoProgetto = document.getElementById("tipo_progetto").value;
-  let tipologiaRichiesta = "";
-  if(tipoProgetto === "tappezzeria") tipologiaRichiesta = "solo tappezzeria";
-  else if(tipoProgetto === "falegnameria") tipologiaRichiesta = "solo falegnameria";
-  else if(tipoProgetto === "entrambe") tipologiaRichiesta = "entrambe";
-
-  let wb = XLSX.utils.book_new();
-
-  let risultati = [{
-    "ID Valutazione":                   idValutazione,
-    "Title":                            titoloProgetto,
-    "Data ricezione richiesta cliente": dataRicezione,
-    "Data richiesta per invio offerta": dataOfferta,
-    "Nome referente progetto":          referente,
-    "Ref. comm.le":                     refCommerciale,
-    "Finanziamento/Bando":              finanziamento,
-    "Budget":                           budget,
-    "Tipologia Richiesta":              tipologiaRichiesta,
-    "Data Download File":               dataDownload,
-    "Punteggio Complessità":            window.punteggioComplessita,
-    "Classe Complessità":               window.classeComplessita,
-    "Classe Interesse":                 window.classeInteresse,
-    "Tipologia Offerta":                window.esitoFinale
-  }];
-
-  let ws2 = XLSX.utils.json_to_sheet(risultati);
-  XLSX.utils.book_append_sheet(wb, ws2, "Risultati");
-
-  let risposte = [];
-  complessitaData.forEach((item, index) => {
-    let sel = document.getElementById("complessita_" + index);
-    risposte.push({
-      "ID Valutazione": idValutazione,
-      "Sezione": "Complessità",
-      "Domanda": item.domanda,
-      "Risposta": sel.options[sel.selectedIndex].text
-    });
-  });
-
-  let sTipo    = document.getElementById("tipo_progetto");
-  let sFascia  = document.getElementById("valore_fascia");
-  let sCliente = document.getElementById("tipologia_cliente");
-
-  risposte.push({
-    "ID Valutazione": idValutazione,
-    "Sezione": "Interesse",
-    "Domanda": "Tipo progetto",
-    "Risposta": sTipo.options[sTipo.selectedIndex].text
-  });
-  risposte.push({
-    "ID Valutazione": idValutazione,
-    "Sezione": "Interesse",
-    "Domanda": "Valore del progetto",
-    "Risposta": sFascia.options[sFascia.selectedIndex].text
-  });
-  risposte.push({
-    "ID Valutazione": idValutazione,
-    "Sezione": "Interesse",
-    "Domanda": "Tipologia cliente",
-    "Risposta": sCliente.options[sCliente.selectedIndex].text
-  });
-
-  let ws1 = XLSX.utils.json_to_sheet(risposte);
-  XLSX.utils.book_append_sheet(wb, ws1, "Risposte");
-
-  XLSX.writeFile(wb, nomeFile);
-
-  setTimeout(function(){
-    const destinatario = "preventivi@divania.com";
-    const oggetto = encodeURIComponent("Progetto: " + titoloProgetto);
-    const corpo = encodeURIComponent(
-      "Gentile Ufficio Preventivi,\n\n" +
-      "in allegato trovi il file Excel relativo al progetto: " + titoloProgetto + "\n" +
-      "Con scadenza il: " + dataOffertaFormattata + "\n\n" +
-      "Cordiali saluti."
-    );
-    window.location.href = "mailto:" + destinatario + "?subject=" + oggetto + "&body=" + corpo;
-  }, 1000);
-}
-
-</script>
 </body>
 </html>
