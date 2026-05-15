@@ -246,7 +246,7 @@ let select=document.createElement("select");
 select.id=id+"_"+index;
 select.innerHTML="<option value=''>-- Seleziona --</option>";
 item.opzioni.forEach((op,i)=>{
-select.innerHTML+=<option value="${i}">${op}</option>;
+select.innerHTML+=`<option value="${i}">${op}</option>`;
 });
 select.onchange=calcola;
 container.appendChild(label);
@@ -282,7 +282,7 @@ else if(totale<=2.3){classe="MEDIO";}
 else{classe="ALTO";}
 
 document.getElementById("risultatoComplessita").innerHTML=
-<div class='result-box'>Punteggio Complessità: ${totale}<br>Classe: ${classe}</div>;
+`<div class='result-box'>Punteggio Complessità: ${totale}<br>Classe: ${classe}</div>`;
 
 window.classeComplessita=classe;
 window.punteggioComplessita=totale;
@@ -311,7 +311,7 @@ const matrice={
 let risultato=matrice[interesseData[0].punteggi[v1]][interesseData[1].punteggi[v2]];
 
 document.getElementById("risultatoInteresse").innerHTML=
-<div class='result-box'>Classe Interesse: ${risultato}</div>;
+`<div class='result-box'>Classe Interesse: ${risultato}</div>`;
 
 window.classeInteresse=risultato;
 calcolaFinale();
@@ -323,7 +323,7 @@ if(!window.classeComplessita||!window.classeInteresse) return;
 
 if(window.classeInteresse==="NON QUOTARE"){
 document.getElementById("esitoFinale").innerHTML=
-<div class='result-box red'>NON QUOTARE</div>;
+`<div class='result-box red'>NON QUOTARE</div>`;
 window.esitoFinale="NON QUOTARE";
 return;
 }
@@ -337,7 +337,7 @@ const matriceFinale={
 let esito=matriceFinale[window.classeInteresse][window.classeComplessita];
 
 document.getElementById("esitoFinale").innerHTML=
-<div class='result-box'>${esito}</div>;
+`<div class='result-box'>${esito}</div>`;
 
 window.esitoFinale=esito;
 }
@@ -367,7 +367,7 @@ return;
 let primaRispostaSelect = document.getElementById("complessita_0");
 let categoriaSelezionata = primaRispostaSelect.options[primaRispostaSelect.selectedIndex].text;
 
-const idValutazione = titoloProgetto.replace(/\s+/g,"")+""+Date.now();
+const idValutazione = titoloProgetto.replace(/\s+/g,"_")+"_"+Date.now();
 
 let wb = XLSX.utils.book_new();
 
