@@ -113,7 +113,7 @@ font-weight:bold;
 <div class="section">
 <div class="section-title">Dati Iniziali</div>
 
-<label>Titolo Progetto</label>
+<label>Titolo progetto</label>
 <input type="text" id="nomeProgetto">
 
 <label>Cliente</label>
@@ -348,12 +348,12 @@ window.esitoFinale=esito;
 
 function scaricaExcel(){
 
-const description=document.getElementById("nomeProgetto").value;
+const Titolo progetto=document.getElementById("nomeProgetto").value;
 const cliente=document.getElementById("cliente").value;
 const dataRDO=document.getElementById("data").value;
 const versione=document.getElementById("versione").value;
 
-if(!description||!cliente||!dataRDO||!versione){
+if(!Titolo progetto||!cliente||!dataRDO||!versione){
 alert("Compilare tutti i campi iniziali.");
 return;
 }
@@ -373,7 +373,7 @@ let wb=XLSX.utils.book_new();
 
 // ===== FOGLIO 1: RISULTATI =====
 let risultati=[{
-"Title":description,
+"Title":Titolo progetto,
 "Categoria":categoriaSelezionata,
 "Cliente":cliente,
 "Data RDO":dataRDO,
