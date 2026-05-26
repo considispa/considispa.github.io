@@ -7,9 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body{
   font-family: Arial, Helvetica, sans-serif;
@@ -63,7 +61,6 @@ h1{
   font-size:15px;
 }
 
-/* Grid 2 colonne su desktop, 1 colonna su mobile */
 .grid-2{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -71,33 +68,13 @@ h1{
 }
 
 @media (max-width: 600px){
-  .grid-2{
-    grid-template-columns:1fr;
-  }
-
-  header h2{
-    font-size:15px;
-    letter-spacing:1px;
-  }
-
-  h1{
-    font-size:17px;
-  }
-
-  .section{
-    padding:15px;
-  }
-
-  .section-title{
-    margin:-15px -15px 15px -15px;
-    font-size:14px;
-  }
-
-  button{
-    width:100%;
-    padding:14px;
-    font-size:15px;
-  }
+  .grid-2{ grid-template-columns:1fr; }
+  header h2{ font-size:15px; letter-spacing:1px; }
+  h1{ font-size:17px; }
+  .section{ padding:15px; }
+  .section-title{ margin:-15px -15px 15px -15px; font-size:14px; }
+  button{ width:100%; padding:14px; font-size:15px; }
+  .checklist-select{ min-width:140px !important; font-size:13px !important; }
 }
 
 label{
@@ -107,20 +84,18 @@ label{
   font-size:14px;
 }
 
-select, input{
+select, input[type="text"], input[type="date"]{
   width:100%;
   padding:10px 8px;
   margin-top:5px;
   border:1px solid #ccc;
   border-radius:4px;
-  box-sizing:border-box;
-  font-size:16px; /* 16px evita lo zoom automatico su iOS */
+  font-size:16px;
   -webkit-appearance:none;
   appearance:none;
   background-color:white;
 }
 
-/* Freccia custom per select */
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -146,14 +121,8 @@ button{
   touch-action:manipulation;
 }
 
-button:hover{
-  background:#a8873a;
-}
-
-button:active{
-  background:#8a6e2f;
-  transform:scale(0.98);
-}
+button:hover{ background:#a8873a; }
+button:active{ background:#8a6e2f; transform:scale(0.98); }
 
 .result-box{
   padding:15px;
@@ -167,8 +136,72 @@ button:active{
 .yellow{background:#fff3cd;}
 .red{background:#f8d7da;}
 
-#valore_fascia_container{
+#valore_fascia_container{ display:none; }
+
+.checklist-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid #f0f0f0;
+  flex-wrap:wrap;
+}
+
+.checklist-item:last-child{ border-bottom:none; }
+
+.checklist-item input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  min-width:20px;
+  cursor:pointer;
+  accent-color:#C9A84C;
+  margin:0;
+  padding:0;
+}
+
+.checklist-label{
+  flex:1;
+  font-size:14px;
+  font-weight:normal;
+  margin:0;
+  min-width:150px;
+}
+
+.checklist-select{
+  width:auto !important;
+  min-width:210px;
+  padding:6px 30px 6px 8px !important;
+  font-size:14px !important;
+  border:1px solid #ccc;
+  border-radius:4px;
+  background-color:#f9f9f9;
+  color:#555;
+  transition: border-color 0.2s;
+}
+
+.checklist-select:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  background-color:#eee;
+}
+
+.checklist-select.attivo{
+  background-color:white;
+  border-color:#C9A84C;
+  color:#333;
+}
+
+.checklist-select.errore{
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 2px rgba(220,53,69,0.25) !important;
+}
+
+.errore-msg{
+  font-size:12px;
+  color:#dc3545;
+  margin-top:4px;
   display:none;
+  width:100%;
 }
 </style>
 </head>
@@ -186,29 +219,23 @@ button:active{
 <!-- DATI INIZIALI -->
 <div class="section">
 <div class="section-title">Dati Iniziali</div>
-
 <div class="grid-2">
-
   <div>
     <label>Titolo Progetto</label>
     <input type="text" id="titoloProgetto" autocomplete="off">
   </div>
-
   <div>
     <label>Nome referente progetto</label>
     <input type="text" id="referente" autocomplete="off">
   </div>
-
   <div>
     <label>Data ricezione richiesta cliente</label>
     <input type="date" id="dataRicezione">
   </div>
-
   <div>
     <label>Data richiesta per invio offerta</label>
     <input type="date" id="dataOfferta">
   </div>
-
   <div>
     <label>Ref. comm.le</label>
     <select id="refCommerciale">
@@ -220,7 +247,6 @@ button:active{
       <option>Alberto Picciolini</option>
     </select>
   </div>
-
   <div>
     <label>Finanziamento/Bando</label>
     <select id="finanziamento">
@@ -229,7 +255,6 @@ button:active{
       <option>No</option>
     </select>
   </div>
-
   <div>
     <label>Budget</label>
     <select id="budget">
@@ -238,8 +263,13 @@ button:active{
       <option>No</option>
     </select>
   </div>
-
 </div>
+</div>
+
+<!-- COMPLETEZZA SPECIFICHE CLIENTE -->
+<div class="section">
+<div class="section-title">Completezza Specifiche Cliente</div>
+<div id="checklistSpecifiche"></div>
 </div>
 
 <!-- COMPLESSITÀ -->
@@ -267,25 +297,99 @@ button:active{
 
 <script>
 
+const specificheItems = [
+  "Tipologia Prodotto (Poltrona, Sedia, ecc.)",
+  "Modello (ALBA, MOON, ecc.) o Render/Foto",
+  "Specifiche materiali",
+  "Quantità",
+  "Descrizione articolo",
+  "Logistica",
+  "Disegni tecnici",
+  "Abaco",
+  "Piantine"
+];
+
+function renderChecklist(){
+  const container = document.getElementById("checklistSpecifiche");
+  specificheItems.forEach((voce, i) => {
+    const row = document.createElement("div");
+    row.className = "checklist-item";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = "spec_cb_" + i;
+
+    const lbl = document.createElement("label");
+    lbl.htmlFor = "spec_cb_" + i;
+    lbl.className = "checklist-label";
+    lbl.innerText = voce;
+
+    const sel = document.createElement("select");
+    sel.id = "spec_sel_" + i;
+    sel.className = "checklist-select";
+    sel.disabled = true;
+    sel.innerHTML =
+      "<option value=''>-- Qualità --</option>" +
+      "<option value='poco_chiara'>Poco chiara e/o eccessive</option>" +
+      "<option value='esaustive'>Esaustive o nostra proposta</option>";
+
+    const errMsg = document.createElement("span");
+    errMsg.className = "errore-msg";
+    errMsg.id = "spec_err_" + i;
+    errMsg.innerText = "⚠️ Seleziona la qualità della specifica.";
+
+    cb.addEventListener("change", function(){
+      if(cb.checked){
+        sel.disabled = false;
+        sel.classList.add("attivo");
+      } else {
+        sel.disabled = true;
+        sel.classList.remove("attivo");
+        sel.classList.remove("errore");
+        sel.value = "";
+        errMsg.style.display = "none";
+      }
+    });
+
+    sel.addEventListener("change", function(){
+      if(sel.value !== ""){
+        sel.classList.remove("errore");
+        errMsg.style.display = "none";
+      }
+    });
+
+    row.appendChild(cb);
+    row.appendChild(lbl);
+    row.appendChild(sel);
+    row.appendChild(errMsg);
+    container.appendChild(row);
+  });
+}
+
+function validaChecklist(){
+  let valido = true;
+  specificheItems.forEach((_, i) => {
+    const cb  = document.getElementById("spec_cb_"  + i);
+    const sel = document.getElementById("spec_sel_" + i);
+    const err = document.getElementById("spec_err_" + i);
+    if(cb.checked && sel.value === ""){
+      sel.classList.add("errore");
+      err.style.display = "block";
+      valido = false;
+    } else {
+      sel.classList.remove("errore");
+      err.style.display = "none";
+    }
+  });
+  return valido;
+}
+
 const complessitaData = [
 {
-  domanda:"Completezza/qualità delle specifiche del Cliente",
-  opzioni:[
-    "Esaustive o proposta nostra",
-    "Sufficienti o proposta nostra",
-    "Poco chiara e/o eccessive"
-  ],
-  punteggi:[1,2,3],
-  peso:0.24
-},
-{
   domanda:"Camere o Zone Comuni?",
-  opzioni:[
-    "Solo camere",
-    "Presenza di zone comuni"
-  ],
+  opzioni:["Solo camere","Presenza di zone comuni"],
   punteggi:[1,3],
-  peso:0.07
+  peso:0.0921
 },
 {
   domanda:"Modello nuovo",
@@ -295,7 +399,7 @@ const complessitaData = [
     "Modello nuovo o ricoperture (sia per tapp che per fale)"
   ],
   punteggi:[1,2,3],
-  peso:0.12
+  peso:0.1579
 },
 {
   domanda:"Componenti che richiedono coinvolgimento di un terzista",
@@ -305,26 +409,19 @@ const complessitaData = [
     "Sì, parti sostanziali o prodotti completi"
   ],
   punteggi:[1,2,3],
-  peso:0.07
+  peso:0.0921
 },
 {
   domanda:"Complessità materiali",
-  opzioni:[
-    "Materiali semplici",
-    "Materiali medi",
-    "Materiali complessi"
-  ],
+  opzioni:["Materiali semplici","Materiali medi","Materiali complessi"],
   punteggi:[1,2,3],
-  peso:0.16
+  peso:0.2105
 },
 {
   domanda:"Numerosità di articoli diversi",
-  opzioni:[
-    "<= 15",
-    "> 15"
-  ],
+  opzioni:["<= 15","> 15"],
   punteggi:[1,3],
-  peso:0.16
+  peso:0.2105
 },
 {
   domanda:"Complessità strutturale",
@@ -334,7 +431,7 @@ const complessitaData = [
     "Struttura complessa (curve, elementi speciali, meccanismi integrati)"
   ],
   punteggi:[1,2,3],
-  peso:0.11
+  peso:0.1447
 },
 {
   domanda:"Complessità logistica",
@@ -344,14 +441,14 @@ const complessitaData = [
     "Logistica complessa (ZTL, centro storico, isole, barche, ecc.)"
   ],
   punteggi:[1,2,3],
-  peso:0.07
+  peso:0.0921
 }
 ];
 
 const soglieLabels = {
-  tappezzeria: ["< 20.000€", "< 200.000€", "> 200.000€"],
-  falegnameria: ["< 70.000€", "< 200.000€", "> 200.000€"],
-  entrambe:    ["< 70.000€", "< 200.000€", "> 200.000€"]
+  tappezzeria: ["< 20.000€","< 200.000€","> 200.000€"],
+  falegnameria:["< 70.000€","< 200.000€","> 200.000€"],
+  entrambe:   ["< 70.000€","< 200.000€","> 200.000€"]
 };
 
 const clienteOpzioni = [
@@ -361,11 +458,11 @@ const clienteOpzioni = [
 ];
 
 function renderComplessita(){
-  let container = document.getElementById("complessita");
+  const container = document.getElementById("complessita");
   complessitaData.forEach((item, index) => {
-    let label = document.createElement("label");
+    const label = document.createElement("label");
     label.innerText = item.domanda;
-    let select = document.createElement("select");
+    const select = document.createElement("select");
     select.id = "complessita_" + index;
     select.innerHTML = "<option value=''>-- Seleziona --</option>";
     item.opzioni.forEach((op, i) => {
@@ -378,11 +475,11 @@ function renderComplessita(){
 }
 
 function renderInteresse(){
-  let container = document.getElementById("interesse");
+  const container = document.getElementById("interesse");
 
-  let lTipo = document.createElement("label");
+  const lTipo = document.createElement("label");
   lTipo.innerText = "Tipo progetto";
-  let sTipo = document.createElement("select");
+  const sTipo = document.createElement("select");
   sTipo.id = "tipo_progetto";
   sTipo.innerHTML = "<option value=''>-- Seleziona --</option>" +
     "<option value='tappezzeria'>Tappezzeria</option>" +
@@ -392,13 +489,13 @@ function renderInteresse(){
   container.appendChild(lTipo);
   container.appendChild(sTipo);
 
-  let fasciaContainer = document.createElement("div");
+  const fasciaContainer = document.createElement("div");
   fasciaContainer.id = "valore_fascia_container";
   fasciaContainer.style.display = "none";
 
-  let lFascia = document.createElement("label");
+  const lFascia = document.createElement("label");
   lFascia.innerText = "Valore del progetto";
-  let sFascia = document.createElement("select");
+  const sFascia = document.createElement("select");
   sFascia.id = "valore_fascia";
   sFascia.innerHTML = "<option value=''>-- Seleziona --</option>";
   sFascia.onchange = calcola;
@@ -407,9 +504,9 @@ function renderInteresse(){
   fasciaContainer.appendChild(sFascia);
   container.appendChild(fasciaContainer);
 
-  let lCliente = document.createElement("label");
+  const lCliente = document.createElement("label");
   lCliente.innerText = "Tipologia cliente";
-  let sCliente = document.createElement("select");
+  const sCliente = document.createElement("select");
   sCliente.id = "tipologia_cliente";
   sCliente.innerHTML = "<option value=''>-- Seleziona --</option>";
   clienteOpzioni.forEach((op, i) => {
@@ -421,106 +518,84 @@ function renderInteresse(){
 }
 
 function aggiorneFasceValore(){
-  let tipo = document.getElementById("tipo_progetto").value;
-  let fasciaContainer = document.getElementById("valore_fascia_container");
-  let sFascia = document.getElementById("valore_fascia");
-
+  const tipo = document.getElementById("tipo_progetto").value;
+  const fasciaContainer = document.getElementById("valore_fascia_container");
+  const sFascia = document.getElementById("valore_fascia");
   if(tipo === ""){
     fasciaContainer.style.display = "none";
     sFascia.value = "";
     return;
   }
-
   fasciaContainer.style.display = "block";
-  let labels = soglieLabels[tipo];
+  const labels = soglieLabels[tipo];
   sFascia.innerHTML = "<option value=''>-- Seleziona --</option>";
   labels.forEach((label, i) => {
     sFascia.innerHTML += `<option value="${i+1}">${label}</option>`;
   });
-
   calcola();
 }
 
+renderChecklist();
 renderComplessita();
 renderInteresse();
 
 function calcola(){
   let totale = 0;
   let completo = true;
-
   complessitaData.forEach((item, index) => {
-    let val = document.getElementById("complessita_" + index).value;
+    const val = document.getElementById("complessita_" + index).value;
     if(val === "") completo = false;
-    if(val !== ""){
-      totale += item.punteggi[val] * item.peso;
-    }
+    if(val !== "") totale += item.punteggi[val] * item.peso;
   });
 
   if(completo){
     totale = parseFloat(totale.toFixed(2));
-    let classe = "";
-    let colore = "green";
-
-    if(totale <= 1.7){ classe = "BASSO"; colore = "green"; }
-    else if(totale <= 2.3){ classe = "MEDIO"; colore = "yellow"; }
-    else { classe = "ALTO"; colore = "red"; }
-
+    let classe = "", colore = "green";
+    if(totale <= 1.7)      { classe = "BASSO"; colore = "green";  }
+    else if(totale <= 2.3) { classe = "MEDIO"; colore = "yellow"; }
+    else                   { classe = "ALTO";  colore = "red";    }
     document.getElementById("risultatoComplessita").innerHTML =
       `<div class='result-box ${colore}'>Punteggio Complessità: ${totale}<br>Classe: ${classe}</div>`;
-
-    window.classeComplessita = classe;
+    window.classeComplessita    = classe;
     window.punteggioComplessita = totale;
   } else {
     window.classeComplessita = null;
   }
-
   calcolaInteresse();
 }
 
 function calcolaInteresse(){
-  let tipo = document.getElementById("tipo_progetto").value;
-  let fasciaVal = document.getElementById("valore_fascia").value;
-  let clienteIdx = document.getElementById("tipologia_cliente").value;
-
+  const tipo       = document.getElementById("tipo_progetto").value;
+  const fasciaVal  = document.getElementById("valore_fascia").value;
+  const clienteIdx = document.getElementById("tipologia_cliente").value;
   if(tipo === "" || fasciaVal === "" || clienteIdx === "") return;
 
-  let valoreClasse = parseInt(fasciaVal);
-  let clienteVal = clienteOpzioni[parseInt(clienteIdx)].val;
+  const valoreClasse = parseInt(fasciaVal);
+  const clienteVal   = clienteOpzioni[parseInt(clienteIdx)].val;
 
   const matrice = {
-    3: {1:"B", 2:"A", 3:"A"},
-    2: {1:"C", 2:"B", 3:"A"},
-    1: {1:"C", 2:"C", 3:"B"}
+    3:{1:"B",2:"A",3:"A"},
+    2:{1:"C",2:"B",3:"A"},
+    1:{1:"C",2:"C",3:"B"}
   };
 
-  let risultato = matrice[clienteVal][valoreClasse];
-  const legende = {
-    A:"A - Massimo interesse",
-    B:"B - Medio interesse",
-    C:"C - Minimo interesse"
-  };
-
+  const risultato = matrice[clienteVal][valoreClasse];
+  const legende = { A:"A - Massimo interesse", B:"B - Medio interesse", C:"C - Minimo interesse" };
   document.getElementById("risultatoInteresse").innerHTML =
     `<div class='result-box'>Classe Interesse: ${legende[risultato]}</div>`;
-
   window.classeInteresse = risultato;
   calcolaFinale();
 }
 
 function calcolaFinale(){
   if(!window.classeComplessita || !window.classeInteresse) return;
-
   const matriceFinale = {
     "A":{"ALTO":"Approfondita","MEDIO":"Approfondita","BASSO":"Strutturata"},
-    "B":{"ALTO":"Strutturata","MEDIO":"Strutturata","BASSO":"Snella"},
-    "C":{"ALTO":"Strutturata","MEDIO":"Snella","BASSO":"Snella"}
+    "B":{"ALTO":"Strutturata", "MEDIO":"Strutturata", "BASSO":"Snella"},
+    "C":{"ALTO":"Strutturata", "MEDIO":"Snella",      "BASSO":"Snella"}
   };
-
-  let esito = matriceFinale[window.classeInteresse][window.classeComplessita];
-
-  document.getElementById("esitoFinale").innerHTML =
-    `<div class='result-box'>${esito}</div>`;
-
+  const esito = matriceFinale[window.classeInteresse][window.classeComplessita];
+  document.getElementById("esitoFinale").innerHTML = `<div class='result-box'>${esito}</div>`;
   window.esitoFinale = esito;
 }
 
@@ -538,22 +613,25 @@ function scaricaEApriMail(){
     return;
   }
 
+  if(!validaChecklist()){
+    alert("⚠️ Per ogni specifica flaggata è obbligatorio selezionare la qualità.");
+    const primoErrore = document.querySelector(".checklist-select.errore");
+    if(primoErrore) primoErrore.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
   if(!window.esitoFinale){
     alert("Compilare tutte le domande.");
     return;
   }
 
-  const anno = dataRicezione.split("-")[0];
-
-  const partiData = dataOfferta.split("-");
+  const anno          = dataRicezione.split("-")[0];
+  const partiData     = dataOfferta.split("-");
   const dataOffertaFormattata = partiData[2] + "/" + partiData[1] + "/" + partiData[0];
-
-  const nomePulito = titoloProgetto.replace(/\s+/g, "_");
-  const nomeFile = "Horo_" + nomePulito + "_" + anno + ".xlsx";
-
+  const nomePulito    = titoloProgetto.replace(/\s+/g, "_");
+  const nomeFile      = "Horo_" + nomePulito + "_" + anno + ".xlsx";
   const idValutazione = nomePulito + "_" + Date.now();
-  const now = new Date();
-  const dataDownload = now.toLocaleString("it-IT");
+  const dataDownload  = new Date().toLocaleString("it-IT");
 
   let tipoProgetto = document.getElementById("tipo_progetto").value;
   let tipologiaRichiesta = "";
@@ -561,13 +639,21 @@ function scaricaEApriMail(){
   else if(tipoProgetto === "falegnameria") tipologiaRichiesta = "solo falegnameria";
   else if(tipoProgetto === "entrambe") tipologiaRichiesta = "entrambe";
 
+  let subtaskFlaggatì = [];
+  specificheItems.forEach((voce, i) => {
+    const cb = document.getElementById("spec_cb_" + i);
+    if(cb.checked) subtaskFlaggatì.push("   - " + voce);
+  });
+
   let wb = XLSX.utils.book_new();
 
+  // ── FOGLIO 1: RISULTATI ───────────────────────────────────────────────────
   let risultati = [{
     "ID Valutazione":                   idValutazione,
     "Title":                            titoloProgetto,
     "Data ricezione richiesta cliente": dataRicezione,
     "Data richiesta per invio offerta": dataOfferta,
+    "Deadline":                         dataOfferta,  // ✅ aggiunta
     "Nome referente progetto":          referente,
     "Ref. comm.le":                     refCommerciale,
     "Finanziamento/Bando":              finanziamento,
@@ -581,41 +667,45 @@ function scaricaEApriMail(){
   }];
 
   let ws2 = XLSX.utils.json_to_sheet(risultati);
+  ws2["!cols"] = Object.keys(risultati[0]).map(() => ({ wch: 22 }));
   XLSX.utils.book_append_sheet(wb, ws2, "Risultati");
 
+  // ── FOGLIO 2: RISPOSTE ────────────────────────────────────────────────────
   let risposte = [];
-  complessitaData.forEach((item, index) => {
-    let sel = document.getElementById("complessita_" + index);
+
+  specificheItems.forEach((voce, i) => {
+    const cb  = document.getElementById("spec_cb_"  + i);
+    const sel = document.getElementById("spec_sel_" + i);
+    let risposta = "Non presente";
+    if(cb.checked){
+      if(sel.value === "poco_chiara")    risposta = "Poco chiara e/o eccessive";
+      else if(sel.value === "esaustive") risposta = "Esaustive o nostra proposta";
+    }
     risposte.push({
       "ID Valutazione": idValutazione,
-      "Sezione": "Complessità",
-      "Domanda": item.domanda,
+      "Sezione":  "Completezza Specifiche",
+      "Domanda":  voce,
+      "Risposta": risposta
+    });
+  });
+
+  complessitaData.forEach((item, index) => {
+    const sel = document.getElementById("complessita_" + index);
+    risposte.push({
+      "ID Valutazione": idValutazione,
+      "Sezione":  "Complessità",
+      "Domanda":  item.domanda,
       "Risposta": sel.options[sel.selectedIndex].text
     });
   });
 
-  let sTipo    = document.getElementById("tipo_progetto");
-  let sFascia  = document.getElementById("valore_fascia");
-  let sCliente = document.getElementById("tipologia_cliente");
+  const sTipo    = document.getElementById("tipo_progetto");
+  const sFascia  = document.getElementById("valore_fascia");
+  const sCliente = document.getElementById("tipologia_cliente");
 
-  risposte.push({
-    "ID Valutazione": idValutazione,
-    "Sezione": "Interesse",
-    "Domanda": "Tipo progetto",
-    "Risposta": sTipo.options[sTipo.selectedIndex].text
-  });
-  risposte.push({
-    "ID Valutazione": idValutazione,
-    "Sezione": "Interesse",
-    "Domanda": "Valore del progetto",
-    "Risposta": sFascia.options[sFascia.selectedIndex].text
-  });
-  risposte.push({
-    "ID Valutazione": idValutazione,
-    "Sezione": "Interesse",
-    "Domanda": "Tipologia cliente",
-    "Risposta": sCliente.options[sCliente.selectedIndex].text
-  });
+  risposte.push({ "ID Valutazione": idValutazione, "Sezione": "Interesse", "Domanda": "Tipo progetto",       "Risposta": sTipo.options[sTipo.selectedIndex].text });
+  risposte.push({ "ID Valutazione": idValutazione, "Sezione": "Interesse", "Domanda": "Valore del progetto", "Risposta": sFascia.options[sFascia.selectedIndex].text });
+  risposte.push({ "ID Valutazione": idValutazione, "Sezione": "Interesse", "Domanda": "Tipologia cliente",   "Risposta": sCliente.options[sCliente.selectedIndex].text });
 
   let ws1 = XLSX.utils.json_to_sheet(risposte);
   XLSX.utils.book_append_sheet(wb, ws1, "Risposte");
@@ -623,15 +713,20 @@ function scaricaEApriMail(){
   XLSX.writeFile(wb, nomeFile);
 
   setTimeout(function(){
-    const destinatario = "preventivi@divania.com";
-    const oggetto = encodeURIComponent("Progetto: " + titoloProgetto);
-    const corpo = encodeURIComponent(
+    let corpoMail =
       "Gentile Ufficio Preventivi,\n\n" +
       "in allegato trovi il file Excel relativo al progetto: " + titoloProgetto + "\n" +
-      "Con scadenza il: " + dataOffertaFormattata + "\n\n" +
-      "Cordiali saluti."
-    );
-    window.location.href = "mailto:" + destinatario + "?subject=" + oggetto + "&body=" + corpo;
+      "Con scadenza il: " + dataOffertaFormattata + ".";
+
+    if(subtaskFlaggatì.length > 0){
+      corpoMail += "\nSubtask da flaggare nel cartellino:\n" + subtaskFlaggatì.join("\n");
+    }
+
+    corpoMail += "\n\nCordiali saluti.";
+
+    window.location.href = "mailto:preventivi@divania.com" +
+      "?subject=" + encodeURIComponent("Progetto: " + titoloProgetto) +
+      "&body=" + encodeURIComponent(corpoMail);
   }, 1000);
 }
 
