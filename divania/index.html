@@ -74,7 +74,6 @@ h1{
   .section{ padding:15px; }
   .section-title{ margin:-15px -15px 15px -15px; font-size:14px; }
   button{ width:100%; padding:14px; font-size:15px; }
-  .checklist-select{ min-width:140px !important; font-size:13px !important; }
 }
 
 label{
@@ -166,43 +165,6 @@ button:active{ background:#8a6e2f; transform:scale(0.98); }
   margin:0;
   min-width:150px;
 }
-
-.checklist-select{
-  width:auto !important;
-  min-width:210px;
-  padding:6px 30px 6px 8px !important;
-  font-size:14px !important;
-  border:1px solid #ccc;
-  border-radius:4px;
-  background-color:#f9f9f9;
-  color:#555;
-  transition: border-color 0.2s;
-}
-
-.checklist-select:disabled{
-  opacity:0.4;
-  cursor:not-allowed;
-  background-color:#eee;
-}
-
-.checklist-select.attivo{
-  background-color:white;
-  border-color:#C9A84C;
-  color:#333;
-}
-
-.checklist-select.errore{
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 0 2px rgba(220,53,69,0.25) !important;
-}
-
-.errore-msg{
-  font-size:12px;
-  color:#dc3545;
-  margin-top:4px;
-  display:none;
-  width:100%;
-}
 </style>
 </head>
 
@@ -245,6 +207,9 @@ button:active{ background:#8a6e2f; transform:scale(0.98); }
       <option>Domenico Salvati</option>
       <option>Sandro Picciolini</option>
       <option>Alberto Picciolini</option>
+      <option>Daniele Salvati</option>
+      <option>Fabrizio Salvati</option>
+      <option>Jean Pierre</option>
     </select>
   </div>
   <div>
@@ -324,72 +289,37 @@ function renderChecklist(){
     lbl.className = "checklist-label";
     lbl.innerText = voce;
 
-    const sel = document.createElement("select");
-    sel.id = "spec_sel_" + i;
-    sel.className = "checklist-select";
-    sel.disabled = true;
-    sel.innerHTML =
-      "<option value=''>-- Qualità --</option>" +
-      "<option value='poco_chiara'>Poco chiara e/o eccessive</option>" +
-      "<option value='esaustive'>Esaustive o nostra proposta</option>";
-
-    const errMsg = document.createElement("span");
-    errMsg.className = "errore-msg";
-    errMsg.id = "spec_err_" + i;
-    errMsg.innerText = "⚠️ Seleziona la qualità della specifica.";
-
-    cb.addEventListener("change", function(){
-      if(cb.checked){
-        sel.disabled = false;
-        sel.classList.add("attivo");
-      } else {
-        sel.disabled = true;
-        sel.classList.remove("attivo");
-        sel.classList.remove("errore");
-        sel.value = "";
-        errMsg.style.display = "none";
-      }
-    });
-
-    sel.addEventListener("change", function(){
-      if(sel.value !== ""){
-        sel.classList.remove("errore");
-        errMsg.style.display = "none";
-      }
-    });
-
     row.appendChild(cb);
     row.appendChild(lbl);
-    row.appendChild(sel);
-    row.appendChild(errMsg);
     container.appendChild(row);
   });
 }
 
 function validaChecklist(){
-  let valido = true;
-  specificheItems.forEach((_, i) => {
-    const cb  = document.getElementById("spec_cb_"  + i);
-    const sel = document.getElementById("spec_sel_" + i);
-    const err = document.getElementById("spec_err_" + i);
-    if(cb.checked && sel.value === ""){
-      sel.classList.add("errore");
-      err.style.display = "block";
-      valido = false;
-    } else {
-      sel.classList.remove("errore");
-      err.style.display = "none";
-    }
-  });
-  return valido;
+  return true;
 }
 
+// ── DATI COMPLESSITÀ ──────────────────────────────────────────────────────
+// 8 domande totali: la prima è "Completezza/qualità delle specifiche del Cliente"
+// Pesi ricalcolati proporzionalmente a partire dai 7 pesi originali del BIN 3.5,
+// riservando peso 0.0833 alla nuova domanda e riscalando i restanti × 0.9167.
+// Somma pesi = 0.0833 + 0.0844 + 0.1447 + 0.0844 + 0.1930 + 0.1930 + 0.1326 + 0.0844 ≈ 1.00
 const complessitaData = [
+{
+  domanda:"Completezza/qualità delle specifiche del Cliente",
+  opzioni:[
+    "Esaustive o proposta nostra",
+    "Sufficienti",
+    "Poco chiare e/o eccessive"
+  ],
+  punteggi:[1,2,3],
+  peso:0.24
+},
 {
   domanda:"Camere o Zone Comuni?",
   opzioni:["Solo camere","Presenza di zone comuni"],
   punteggi:[1,3],
-  peso:0.0921
+  peso:0.07
 },
 {
   domanda:"Modello nuovo",
@@ -399,7 +329,7 @@ const complessitaData = [
     "Modello nuovo o ricoperture (sia per tapp che per fale)"
   ],
   punteggi:[1,2,3],
-  peso:0.1579
+  peso:0.12
 },
 {
   domanda:"Componenti che richiedono coinvolgimento di un terzista",
@@ -409,19 +339,19 @@ const complessitaData = [
     "Sì, parti sostanziali o prodotti completi"
   ],
   punteggi:[1,2,3],
-  peso:0.0921
+  peso:0.07
 },
 {
   domanda:"Complessità materiali",
   opzioni:["Materiali semplici","Materiali medi","Materiali complessi"],
   punteggi:[1,2,3],
-  peso:0.2105
+  peso:0.16
 },
 {
   domanda:"Numerosità di articoli diversi",
   opzioni:["<= 15","> 15"],
   punteggi:[1,3],
-  peso:0.2105
+  peso:0.16
 },
 {
   domanda:"Complessità strutturale",
@@ -431,7 +361,7 @@ const complessitaData = [
     "Struttura complessa (curve, elementi speciali, meccanismi integrati)"
   ],
   punteggi:[1,2,3],
-  peso:0.1447
+  peso:0.11
 },
 {
   domanda:"Complessità logistica",
@@ -441,7 +371,7 @@ const complessitaData = [
     "Logistica complessa (ZTL, centro storico, isole, barche, ecc.)"
   ],
   punteggi:[1,2,3],
-  peso:0.0921
+  peso:0.07
 }
 ];
 
@@ -613,13 +543,6 @@ function scaricaEApriMail(){
     return;
   }
 
-  if(!validaChecklist()){
-    alert("⚠️ Per ogni specifica flaggata è obbligatorio selezionare la qualità.");
-    const primoErrore = document.querySelector(".checklist-select.errore");
-    if(primoErrore) primoErrore.scrollIntoView({behavior:"smooth", block:"center"});
-    return;
-  }
-
   if(!window.esitoFinale){
     alert("Compilare tutte le domande.");
     return;
@@ -639,10 +562,10 @@ function scaricaEApriMail(){
   else if(tipoProgetto === "falegnameria") tipologiaRichiesta = "solo falegnameria";
   else if(tipoProgetto === "entrambe") tipologiaRichiesta = "entrambe";
 
-  let subtaskFlaggatì = [];
+  let subtaskFlaggati = [];
   specificheItems.forEach((voce, i) => {
     const cb = document.getElementById("spec_cb_" + i);
-    if(cb.checked) subtaskFlaggatì.push("   - " + voce);
+    if(cb.checked) subtaskFlaggati.push("   - " + voce);
   });
 
   let wb = XLSX.utils.book_new();
@@ -653,7 +576,7 @@ function scaricaEApriMail(){
     "Title":                            titoloProgetto,
     "Data ricezione richiesta cliente": dataRicezione,
     "Data richiesta per invio offerta": dataOfferta,
-    "Deadline":                         dataOfferta,  // ✅ aggiunta
+    "Deadline":                         dataOfferta,
     "Nome referente progetto":          referente,
     "Ref. comm.le":                     refCommerciale,
     "Finanziamento/Bando":              finanziamento,
@@ -674,13 +597,8 @@ function scaricaEApriMail(){
   let risposte = [];
 
   specificheItems.forEach((voce, i) => {
-    const cb  = document.getElementById("spec_cb_"  + i);
-    const sel = document.getElementById("spec_sel_" + i);
-    let risposta = "Non presente";
-    if(cb.checked){
-      if(sel.value === "poco_chiara")    risposta = "Poco chiara e/o eccessive";
-      else if(sel.value === "esaustive") risposta = "Esaustive o nostra proposta";
-    }
+    const cb = document.getElementById("spec_cb_" + i);
+    const risposta = cb.checked ? "Presente" : "Non presente";
     risposte.push({
       "ID Valutazione": idValutazione,
       "Sezione":  "Completezza Specifiche",
@@ -718,14 +636,15 @@ function scaricaEApriMail(){
       "in allegato trovi il file Excel relativo al progetto: " + titoloProgetto + "\n" +
       "Con scadenza il: " + dataOffertaFormattata + ".";
 
-    if(subtaskFlaggatì.length > 0){
-      corpoMail += "\nSubtask da flaggare nel cartellino:\n" + subtaskFlaggatì.join("\n");
+    if(subtaskFlaggati.length > 0){
+      corpoMail += "\nSubtask da flaggare nel cartellino:\n" + subtaskFlaggati.join("\n");
     }
 
     corpoMail += "\n\nCordiali saluti.";
 
+    const tipoLabel = tipologiaRichiesta.toUpperCase();
     window.location.href = "mailto:preventivi@divania.com" +
-      "?subject=" + encodeURIComponent("Progetto: " + titoloProgetto) +
+      "?subject=" + encodeURIComponent("Progetto: " + titoloProgetto + " - " + tipoLabel) +
       "&body=" + encodeURIComponent(corpoMail);
   }, 1000);
 }
