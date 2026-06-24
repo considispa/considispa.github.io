@@ -378,6 +378,10 @@ return;
 let primaRispostaSelect = document.getElementById("complessita_0");
 let categoriaSelezionata = primaRispostaSelect.options[primaRispostaSelect.selectedIndex].text;
 
+// Tipologia stampo (domanda "Tipo di Attrezzatura (Stampo)")
+let stampoSelect = document.getElementById("complessita_8");
+let tipologiaStampo = stampoSelect.options[stampoSelect.selectedIndex].text;
+
 const idValutazione = titoloProgetto.replace(/\s+/g,"_")+"_"+Date.now();
 
 let wb = XLSX.utils.book_new();
@@ -386,6 +390,7 @@ let wb = XLSX.utils.book_new();
 let risultati=[{
 "Title":titoloProgetto,
 "Categoria":categoriaSelezionata,
+"Tipologia stampo":tipologiaStampo,
 "Cliente":cliente,
 "Custom Card ID":cliente,
 "Data RDO":dataRDO,
