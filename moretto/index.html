@@ -72,6 +72,12 @@ border:1px solid #ccc;
 border-radius:4px;
 }
 
+select:disabled, input:disabled{
+background:#eee;
+color:#999;
+cursor:not-allowed;
+}
+
 button{
 background:#c00000;
 color:white;
@@ -165,7 +171,7 @@ src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABQAAAAI4CAYAAAA1akS5AAAAGXRFW
 
 const complessitaData = [
 {categoria:"Tipologia richiesta", domanda:"La richiesta riguarda una modifica di una commessa già in essere?",
-opzioni:["Trasferimento","Nuovo prodotto"], punteggi:[null,null], peso:null},
+opzioni:["Trasferimento","Nuovo prodotto","Modifica stampo esistente"], punteggi:[null,null,null], peso:null},
 
 {categoria:"Tipologia richiesta", domanda:"La richiesta è di tipo benchmark?",
 opzioni:["Market test (benchmark informativo/aziendale)","Subentro a competitor (benchmark potenziale acquisizione)","No benchmark"], punteggi:[null,null,null], peso:null},
@@ -244,6 +250,9 @@ opzioni:["Basso","Medio","Alto"],
 punteggi:[1,2,3]}
 ];
 
+// Indice dell'opzione "Modifica stampo esistente" nella prima domanda
+const IDX_MODIFICA_STAMPO = "2";
+
 // ==========================
 // RENDER
 // ==========================
@@ -269,10 +278,59 @@ renderSection("complessita",complessitaData);
 renderSection("interesse",interesseData);
 
 // ==========================
+// UTILITY
+// ==========================
+
+// Restituisce il testo dell'opzione selezionata, oppure "" se non selezionata
+function testoSelezionato(sel){
+if(!sel || sel.value==="") return "";
+return sel.options[sel.selectedIndex].text;
+}
+
+// Abilita/disabilita (e svuota) tutte le domande successive alla prima
+function impostaSuccessiveDisabilitate(disabilita){
+complessitaData.forEach((item,index)=>{
+if(index===0) return;
+let sel=document.getElementById("complessita_"+index);
+sel.disabled=disabilita;
+if(disabilita) sel.value="";
+});
+interesseData.forEach((item,index)=>{
+let sel=document.getElementById("interesse_"+index);
+sel.disabled=disabilita;
+if(disabilita) sel.value="";
+});
+}
+
+// ==========================
 // CALCOLI
 // ==========================
 
 function calcola(){
+
+let primaSelect=document.getElementById("complessita_0");
+let modificaStampo=(primaSelect.value===IDX_MODIFICA_STAMPO);
+
+// Disabilita o riabilita tutte le domande successive
+impostaSuccessiveDisabilitate(modificaStampo);
+
+// ===== CASO SPECIALE: Modifica stampo esistente =====
+if(modificaStampo){
+document.getElementById("risultatoComplessita").innerHTML="";
+document.getElementById("risultatoInteresse").innerHTML="";
+window.punteggioComplessita=undefined;
+window.classeComplessita=undefined;
+window.classeInteresse=undefined;
+window.esitoFinale="Approfondita";
+document.getElementById("esitoFinale").innerHTML=
+"<div class='result-box'>Approfondita</div>";
+return;
+}
+
+// ===== FLUSSO NORMALE =====
+// Ripulisco eventuale esito impostato dal caso speciale
+window.esitoFinale=undefined;
+document.getElementById("esitoFinale").innerHTML="";
 
 let totale=0;
 let completo=true;
@@ -297,6 +355,10 @@ document.getElementById("risultatoComplessita").innerHTML=
 
 window.classeComplessita=classe;
 window.punteggioComplessita=totale;
+} else {
+document.getElementById("risultatoComplessita").innerHTML="";
+window.classeComplessita=undefined;
+window.punteggioComplessita=undefined;
 }
 
 calcolaInteresse();
@@ -375,12 +437,11 @@ alert("Compilare tutte le domande.");
 return;
 }
 
-let primaRispostaSelect = document.getElementById("complessita_0");
-let categoriaSelezionata = primaRispostaSelect.options[primaRispostaSelect.selectedIndex].text;
+// Categoria = risposta alla prima domanda (vuoto se non selezionata)
+let categoriaSelezionata = testoSelezionato(document.getElementById("complessita_0"));
 
-// Tipologia stampo (domanda "Tipo di Attrezzatura (Stampo)")
-let stampoSelect = document.getElementById("complessita_8");
-let tipologiaStampo = stampoSelect.options[stampoSelect.selectedIndex].text;
+// Tipologia stampo (domanda "Tipo di Attrezzatura (Stampo)") - vuoto se non compilata
+let tipologiaStampo = testoSelezionato(document.getElementById("complessita_8"));
 
 const idValutazione = titoloProgetto.replace(/\s+/g,"_")+"_"+Date.now();
 
@@ -395,10 +456,10 @@ let risultati=[{
 "Custom Card ID":cliente,
 "Data RDO":dataRDO,
 "Owner":owner,
-"Punteggio complessità":window.punteggioComplessita,
-"Classe complessità":window.classeComplessita,
-"Classe interesse":window.classeInteresse,
-"Classe preventivazione":window.esitoFinale,
+"Punteggio complessità":(window.punteggioComplessita!==undefined && window.punteggioComplessita!==null) ? window.punteggioComplessita : "",
+"Classe complessità":window.classeComplessita || "",
+"Classe interesse":window.classeInteresse || "",
+"Classe preventivazione":window.esitoFinale || "",
 "Column Name":"01. Nuova richiesta | New RFQ",
 "Board Name":"Moretto - gestione offerte"
 }];
@@ -417,7 +478,7 @@ risposte.push({
 "Sezione":"Complessità",
 "Categoria":item.categoria,
 "Domanda":item.domanda,
-"Risposta":sel.options[sel.selectedIndex].text
+"Risposta":testoSelezionato(sel)
 });
 });
 
@@ -429,7 +490,7 @@ risposte.push({
 "Sezione":"Interesse",
 "Categoria":item.categoria,
 "Domanda":item.domanda,
-"Risposta":sel.options[sel.selectedIndex].text
+"Risposta":testoSelezionato(sel)
 });
 });
 
