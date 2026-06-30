@@ -406,11 +406,11 @@ v1=parseInt(v1);
 v2=parseInt(v2);
 
 const matrice={
-5:{1:"B",2:"A",3:"A"},
-4:{1:"B",2:"A",3:"A"},
-3:{1:"B",2:"B",3:"A"},
-2:{1:"C",2:"B",3:"B"},
-1:{1:"NON QUOTARE",2:"C",3:"B"}
+5:{1:"MEDIO",2:"ALTO",3:"ALTO"},
+4:{1:"MEDIO",2:"ALTO",3:"ALTO"},
+3:{1:"MEDIO",2:"MEDIO",3:"ALTO"},
+2:{1:"BASSO",2:"MEDIO",3:"MEDIO"},
+1:{1:"NON QUOTARE",2:"BASSO",3:"MEDIO"}
 };
 
 let risultato=matrice[interesseData[0].punteggi[v1]][interesseData[1].punteggi[v2]];
@@ -434,9 +434,9 @@ return;
 }
 
 const matriceFinale={
-"A":{"ALTO":"Approfondita","MEDIO":"Approfondita","BASSO":"Strutturata"},
-"B":{"ALTO":"Strutturata","MEDIO":"Strutturata","BASSO":"Snella"},
-"C":{"ALTO":"Strutturata","MEDIO":"Snella","BASSO":"Snella"}
+"ALTO":{"ALTO":"Approfondita","MEDIO":"Approfondita","BASSO":"Strutturata"},
+"MEDIO":{"ALTO":"Strutturata","MEDIO":"Strutturata","BASSO":"Snella"},
+"BASSO":{"ALTO":"Strutturata","MEDIO":"Snella","BASSO":"Snella"}
 };
 
 let esito=matriceFinale[window.classeInteresse][window.classeComplessita];
@@ -472,6 +472,15 @@ return;
 // Categoria = risposta alla prima domanda (vuoto se non selezionata)
 let categoriaSelezionata = testoSelezionato(document.getElementById("complessita_0"));
 
+// Benchmark (domanda "La richiesta è di tipo benchmark?")
+let benchmarkMap = {
+"0":"Market test",
+"1":"Subentro a competitor",
+"2":"No benchmark"
+};
+let benchmarkRaw = document.getElementById("complessita_1").value;
+let benchmark = (benchmarkRaw!=="") ? benchmarkMap[benchmarkRaw] : "";
+
 // Tipologia stampo (domanda "Tipo di Attrezzatura (Stampo)") - vuoto se non compilata
 let tipologiaStampo = testoSelezionato(document.getElementById("complessita_8"));
 
@@ -483,6 +492,7 @@ let wb = XLSX.utils.book_new();
 let risultati=[{
 "Title":titoloProgetto,
 "Categoria":categoriaSelezionata,
+"Benchmark":benchmark,
 "Tipologia stampo":tipologiaStampo,
 "Cliente":cliente,
 "Custom Card ID":cliente,
